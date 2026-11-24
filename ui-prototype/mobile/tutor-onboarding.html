@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="description" content="Mobile tutor onboarding wizard — steps 1–6."/>
+  <title>Tutor Onboarding — Mobile</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"/>
+  <link rel="stylesheet" href="../design-tokens.css"/>
+  <link rel="stylesheet" href="../styles.css"/>
+  <link rel="stylesheet" href="styles.css"/>
+  <script src="../shell.js"></script>
+  <style>
+    .phone-body { padding: var(--space-4) var(--space-5); }
+    .wizard-dots { display: flex; gap: var(--space-2); align-items: center; padding: var(--space-3) 0; }
+    .wizard-dots .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--color-surface-3); border: 2px solid var(--color-border-strong); }
+    .wizard-dots .dot.is-done { border-color: var(--color-success); background: var(--color-success); }
+    .wizard-dots .dot.is-active { border-color: var(--color-primary); }
+    .step-form { display: grid; gap: var(--space-3); }
+    .step-form .row { align-items: center; gap: var(--space-3); padding: var(--space-3); border: 1px solid var(--color-border-subtle); border-radius: var(--radius-lg); background: var(--color-surface); }
+    .step-form .label { font-size: var(--text-body-sm); font-weight: var(--weight-semibold); }
+    .step-form .muted { font-size: var(--text-body-xs); color: var(--color-text-dim); }
+    .step-form input, .step-form textarea { font-size: var(--text-body-sm); }
+    .toggle-row { display: flex; gap: var(--space-3); align-items: center; padding: var(--space-3); border: 1px solid var(--color-border-subtle); border-radius: var(--radius-lg); background: var(--color-surface); }
+    .quiz-card-m { display: flex; justify-content: space-between; align-items: center; padding: var(--space-3); border: 1px solid var(--color-border-subtle); border-radius: var(--radius-lg); background: var(--color-surface); box-shadow: var(--shadow-sm); margin-bottom: var(--space-2); }
+  </style>
+</head>
+<body>
+  <div class="phone-frame">
+    <div class="status-bar">10:55 AM</div>
+    <main class="phone-body">
+      <div class="app-nav">
+        <button class="back-btn" aria-label="Back"><span class="icon icon-sm"></span></button>
+        <span class="app-nav-title">Tutor onboarding</span>
+        <span class="app-nav-right"></span>
+      </div>
+
+      <div class="wizard-dots" role="list">
+        <span class="dot is-done" role="listitem" aria-label="Step 1"></span>
+        <span class="dot is-active" role="listitem" aria-label="Step 2"></span>
+        <span class="dot" role="listitem" aria-label="Step 3"></span>
+        <span class="dot" role="listitem" aria-label="Step 4"></span>
+      </div>
+      <div class="muted" id="step-title" style="font-weight: var(--weight-semibold); margin-bottom: var(--space-4);">Step 1 — Personal profile</div>
+
+      <div class="step-form">
+        <div class="row"><span class="label" style="flex: 1;">Name</span><input class="input" placeholder="Maya Chen" aria-label="Name"/></div>
+        <div class="row"><span class="label" style="flex: 1;">Email</span><input class="input" placeholder="maya.chen@adaptivelearning.com" aria-label="Email"/></div>
+        <div class="row"><span class="label" style="flex: 1;">Subject</span>
+          <select class="select" aria-label="Subject" style="max-width: 140px;">
+            <option>Calculus</option><option>Linear Algebra</option><option>Statistics</option><option>Physics</option>
+          </select></div>
+        <div class="row"><span class="label" style="flex: 1;">Years</span><input class="input" style="max-width: 120px;" placeholder="10+" aria-label="Years"/></div>
+        <div class="toggle-row"><span class="label">Evening sessions (after 5pm)</span><span class="toggle is-on"><input type="checkbox" checked aria-label="Evening sessions"/><span class="knob"></span></span></div>
+        <div class="toggle-row"><span class="label">Weekend availability</span><span class="toggle"><input type="checkbox" aria-label="Weekend availability"/><span class="knob"></span></span></div>
+      </div>
+
+      <div class="quiz-card-m">
+        <div><h4 class="course-title">Calculus I — Limits &amp; Continuity</h4><div class="muted text-xs mt-1">8 questions · 10 min</div></div>
+        <button class="btn btn--ghost">Preview →</button>
+      </div>
+
+      <div class="m-sticky-bar">
+        <button class="btn btn--ghost btn--sm" id="m-prev" disabled>Back</button>
+        <button class="btn btn--primary btn--sm" id="m-next">Continue</button>
+      </div>
+    </main>
+    <div class="home-indicator"></div>
+  </div>
+  <script>
+    (function () {
+      const A = window.A;
+      document.querySelectorAll(".back-btn .icon").forEach((s) => { s.innerHTML = A.icons.arrowLeft; });
+      document.getElementById("m-prev").addEventListener("click", () => window.A.toast("Step back", "info"));
+      document.getElementById("m-next").addEventListener("click", () => {
+        const dots = document.querySelectorAll(".wizard-dots .dot");
+        dots.forEach((d) => d.classList.remove("is-active", "is-done"));
+        dots[0].classList.add("is-done");
+        dots[1].classList.add("is-done", "is-active");
+        document.getElementById("step-title").textContent = "Step 2 — Subjects & interests";
+        window.A.toast("Step 2 shown", "info");
+      });
+      document.querySelector(".quiz-card-m button").addEventListener("click", () => window.A.toast("Quiz preview ready", "info"));
+    })();
+  </script>
+</body>
+</html>

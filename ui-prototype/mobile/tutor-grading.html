@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="description" content="Mobile tutor grading queue with detail panel and rubric."/>
+  <title>Tutor Grading — Mobile</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"/>
+  <link rel="stylesheet" href="../design-tokens.css"/>
+  <link rel="stylesheet" href="../styles.css"/>
+  <link rel="stylesheet" href="styles.css"/>
+  <script src="../shell.js"></script>
+  <style>
+    .phone-body { padding: var(--space-4); }
+    .console-tabs-m { display: flex; gap: var(--space-3); border-bottom: 1px solid var(--color-border-subtle); padding: var(--space-3) 0; margin: var(--space-3) 0; }
+    .console-tabs-m .tab { font-weight: var(--weight-semibold); border-bottom: 2px solid transparent; padding-bottom: var(--space-2); font-size: var(--text-body-sm); }
+    .console-tabs-m .tab.is-active { color: var(--color-text); border-bottom-color: var(--color-action); }
+    .queue-row { display: flex; gap: var(--space-3); align-items: center; padding: var(--space-3); border-bottom: 1px solid var(--color-border-subtle); }
+    .queue-row .avatar { flex-shrink: 0; }
+    .detail-panel { margin-top: var(--space-3); padding: var(--space-4); border: 1px solid var(--color-border-subtle); border-radius: var(--radius-lg); background: var(--color-surface); }
+    .detail-panel .rubric-row { display: flex; gap: var(--space-3); margin-top: var(--space-3); flex-wrap: wrap; }
+  </style>
+</head>
+<body>
+  <div class="phone-frame">
+    <div class="status-bar">11:02 AM</div>
+    <main class="phone-body">
+      <div class="app-nav">
+        <button class="back-btn" aria-label="Back"><span class="icon icon-sm"></span></button>
+        <span class="app-nav-title">Grading</span>
+        <span class="app-nav-right"></span>
+      </div>
+
+      <div class="console-tabs-m" role="tablist">
+        <span class="tab is-active" data-tab="queue" role="tab">Queue</span>
+        <span class="tab" data-tab="progress" role="tab">In progress</span>
+      </div>
+
+      <h4 class="heading-sm">Ungraded — 4 submissions</h4>
+      <div class="queue-row">
+        <span class="avatar avatar--sm">MC</span><span class="bold text-sm">Maya Chen</span>
+        <span class="badge">L3.2 Epsilon-Delta</span>
+        <div class="spacer"></div>
+        <button class="btn btn--ghost btn--sm" id="m-open">Open</button>
+      </div>
+      <div class="queue-row">
+        <span class="avatar avatar--sm">RS</span><span class="bold text-sm">Roberto Sura</span>
+        <span class="badge">L3.2 Epsilon-Delta</span>
+        <div class="spacer"></div>
+        <button class="btn btn--ghost btn--sm">Open</button>
+      </div>
+      <div class="queue-row">
+        <span class="avatar avatar--sm">SP</span><span class="bold text-sm">Samira Patel</span>
+        <span class="badge">L4.1 Continuity</span>
+        <div class="spacer"></div>
+        <button class="btn btn--ghost btn--sm">Open</button>
+      </div>
+      <div class="queue-row">
+        <span class="avatar avatar--sm">AL</span><span class="bold text-sm">Ada Lovelace</span>
+        <span class="badge">L2.1 Definition of Limit</span>
+        <div class="spacer"></div>
+        <button class="btn btn--ghost btn--sm">Open</button>
+      </div>
+
+      <div class="detail-panel">
+        <h4 class="heading-md" style="font-size: var(--text-body); margin-bottom: var(--space-3);">Grading: Maya Chen — L3.2 Epsilon-Delta</h4>
+        <div class="row wrap justify-between mb-2">
+          <span class="muted text-xs">Submitted Nov 19, 14:03 · Due Nov 20</span>
+          <span class="status-pill--success">Saved</span>
+        </div>
+        <div class="rubric-row">
+          <span class="stat-tile"><span class="stat-value">7</span><span class="stat-label">Clarity</span></span></span>
+          <span class="stat-tile"><span class="stat-value">8</span><span class="stat-label">Accuracy</span></span></span>
+          <span class="stat-tile"><span class="stat-value">6</span><span class="stat-label">Reasoning</span></span></span>
+          <span class="stat-tile"><span class="stat-value">9</span><span class="stat-label">Presentation</span></span></span>
+        </div>
+        <div class="form-field mt-3">
+          <span class="field-label">Written feedback</span>
+          <textarea class="textarea" rows="3" placeholder="Great work — your epsilon/delta formulation is precise. For a Challenge: try a formal-proof check..." aria-label="Feedback"></textarea>
+        </div>
+        <div class="m-sticky-bar">
+          <button class="btn btn--primary btn--sm" id="m-save">Save &amp; mark done</button>
+          <button class="btn btn--ghost btn--sm" id="m-next2">Next submission</button>
+        </div>
+      </div>
+    </main>
+    <div class="home-indicator"></div>
+  </div>
+  <script>
+    (function () {
+      const A = window.A;
+      document.querySelectorAll(".back-btn .icon").forEach((s) => { s.innerHTML = A.icons.arrowLeft; });
+      ["m-open", "m-save", "m-next2"].forEach((id) => {
+        document.getElementById(id).addEventListener("click", () => A.toast(id.replace("m-", "").replace("next2", "next") + " — action confirmed", "success"));
+      });
+    })();
+  </script>
+</body>
+</html>

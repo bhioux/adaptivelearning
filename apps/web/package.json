@@ -1,0 +1,6 @@
+{
+  "name": "@al/web",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Adaptive Learning Platform web app — Phase 2: built from ui-prototype/ (EdX + Coursera aesthetic)."
+}

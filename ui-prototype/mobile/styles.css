@@ -1,0 +1,100 @@
+/*
+ * Adaptive Learning Platform — Mobile Screen Styles
+ * Phone chrome (iOS/Android frames) around web-style components from
+ * ../styles.css. Pages are sized to phone viewports.
+ */
+
+/* ---------------- Phone frame ---------------- */
+.phone-frame {
+  width: 100%;
+  max-width: 430px;
+  height: 890px;
+  margin: 0 auto var(--space-8);
+  background: #0b0b0e;
+  border-radius: 38px;
+  padding: 74px 12px 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  position: relative;
+}
+.phone-frame .status-bar {
+  position: absolute;
+  left: 50%;
+  top: 26px;
+  transform: translateX(-50%);
+  font-size: 11px;
+  font-weight: 600;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.phone-frame .home-indicator {
+  position: absolute;
+  left: 50%;
+  bottom: 10px;
+  transform: translateX(-50%);
+  width: 38px;
+  height: 5px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.45);
+}
+
+/* ---------------- App chrome ---------------- */
+.app-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3) 0 var(--space-4);
+  gap: var(--space-3);
+}
+.app-nav .back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-2);
+  border-radius: var(--radius-md);
+}
+.app-nav .app-nav-title {
+  font-size: var(--text-heading-lg);
+  font-weight: var(--weight-semibold);
+}
+.app-nav .app-nav-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* ---------------- Mobile grids & cards ---------------- */
+.m-grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); }
+.m-grid-1 { display: grid; gap: var(--space-3); }
+.m-card-thumb {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+.m-card { border: 1px solid var(--color-border-subtle); border-radius: var(--radius-lg); background: var(--color-surface); padding: var(--space-4); box-shadow: var(--shadow-sm); }
+.m-center { display: flex; flex-direction: column; align-items: center; gap: var(--space-3); }
+.m-sticky-bar {
+  position: sticky;
+  bottom: 0;
+  z-index: 20;
+  display: flex;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-5);
+  background: linear-gradient(to top, var(--color-bg) 70%, transparent);
+}
+.m-title-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-3); }
+
+/* phone preview backgrounds for shells */
+.phone-frame > .phone-body {
+  height: 100%;
+  overflow-y: auto;
+  border-radius: 28px;
+  overflow-x: hidden;
+  background: var(--color-bg);
+}
+
+/* home indicator color stays on dark frame */

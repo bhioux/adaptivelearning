@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="description" content="Your adaptive learning path — personalized courses, adaptive quizzes, and social feed."/>
+  <title>Student Dashboard — Adaptive Learning Platform</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"/>
+  <link rel="stylesheet" href="design-tokens.css"/>
+  <link rel="stylesheet" href="styles.css"/>
+  <script src="shell.js"></script>
+  <style>
+    .continue-card { border: none; overflow: hidden; display: grid; grid-template-columns: 320px 1fr; }
+    .continue-card .thumb { height: 300px; background: linear-gradient(135deg, var(--color-primary-light), var(--color-secondary-light)); position: relative; display: flex; align-items: center; justify-content: center; }
+    .continue-card .thumb .play-btn { width: 56px; height: 56px; background: rgba(255, 255, 255, 0.95); }
+    .continue-card .pad { padding: var(--space-6); display: flex; flex-direction: column; gap: var(--space-3); justify-content: center; }
+    .course-card { grid-template-rows: minmax(0, 1fr); min-height: 150px; }
+    .course-card .course-thumb { height: 132px; }
+    .dash-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-4); }
+    .feed-card { display: block; }
+    .feed-card .feed-thumb--1 { background: linear-gradient(135deg, var(--color-primary-light), var(--color-secondary-light)); }
+    .feed-card .feed-thumb--2 { background: linear-gradient(135deg, #f4b5af, var(--color-warning)); }
+    .feed-card:hover { box-shadow: var(--shadow-sm); }
+    @media (max-width: 767px) {
+      .continue-card { grid-template-columns: 1fr; }
+      .continue-card .thumb { height: 160px; }
+    }
+  </style>
+</head>
+<body data-role="student" data-active="dashboard">
+
+  <main class="container">
+    <!-- ===== Hero + continue lesson ===== -->
+    <section class="pad-top-8 pad-x-6">
+      <h1 class="heading-lg">Hello Samira</h1>
+      <p class="muted text-sm">Your adaptive learning path — continue where you left off</p>
+      <div class="card continue-card" style="margin-top: var(--space-5);">
+        <div class="thumb">
+          <span class="play-btn" role="button" aria-label="Resume lesson"></span>
+        </div>
+        <div class="pad">
+          <div class="row wrap justify-between">
+            <h2 class="heading-md" style="font-size: var(--text-heading-lg);">Calculus I · Limits and Continuity</h2>
+            <div class="progress-ring" style="--progress-deg: 68deg; --ring-size: 56px;"><span class="ring-label">68%</span></div>
+          </div>
+          <div class="muted text-sm">Prof. Sedgewick · 12 lessons · Advanced pacing</div>
+          <div class="progress-bar"><div class="bar" style="width: 68%"></div></div>
+          <div class="row" style="margin-top: var(--space-4);">
+            <button class="btn btn--primary">Resume lesson</button>
+            <button class="btn">Review summary</button>
+            <button class="btn btn--ghost" id="toast-complete">Mark as complete</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="dash-stats pad-top-6" role="status">
+        <div class="stat-tile"><span class="stat-value">58%</span><span class="stat-label">Progress to next level</span></div>
+        <div class="stat-tile"><span class="stat-value">12</span><span class="stat-label">Lessons this week</span></div>
+        <div class="stat-tile"><span class="stat-value">14</span><span class="stat-label">Study hours/week</span></div>
+        <div class="stat-tile"><span class="stat-value">3</span><span class="stat-label">Streak (days)</span></div>
+      </div>
+    </section>
+
+    <!-- ===== Continue learning ===== -->
+    <section class="pad-top-8 pad-x-6">
+      <div class="row wrap justify-between">
+        <h2 class="heading-lg">Continue learning</h2>
+        <a class="btn btn--ghost" href="course-player.html">My courses →</a>
+      </div>
+      <div class="dash-grid pad-top-4">
+        <a class="course-card" href="course-player.html" style="background: linear-gradient(135deg, #f5bca4, #0056d2);">
+          <div class="course-body">
+            <h3 class="course-title">Calculus I: Limits &amp; Continuity</h3>
+            <div class="course-meta">
+              <span class="course-rating" style="color: #fff;">⭐ 4.8</span>
+              <span class="muted text-xs" style="color: rgba(255,255,255,0.8);">12 lessons</span>
+              <span class="muted text-xs" style="color: rgba(255,255,255,0.8);">Advanced</span>
+            </div>
+          </div>
+        </a>
+        <a class="course-card" href="adaptive-quiz.html" style="background: linear-gradient(135deg, #c9f5e9, #28a745);">
+          <div class="course-body">
+            <h3 class="course-title">Graph Theory Basics — Quiz 1</h3>
+            <div class="course-meta">
+              <span class="course-rating">⭐ 4.6</span>
+              <span class="muted text-xs">Quiz · 8 questions</span>
+            </div>
+          </div>
+        </a>
+        <a class="course-card" href="course-player.html" style="background: linear-gradient(135deg, #e8f0fc, #4d7bc8);">
+          <div class="course-body">
+            <h3 class="course-title">Modern World History — WWII</h3>
+            <div class="course-meta">
+              <span class="course-rating">⭐ 4.9</span>
+              <span class="muted text-xs">20 lessons · Self-paced</span>
+            </div>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <!-- ===== Recommended ===== -->
+    <section class="pad-top-8 pad-x-6">
+      <h2 class="heading-lg">Recommended for you</h2>
+      <div class="dash-grid pad-top-4">
+        <a class="course-card" href="adaptive-quiz.html" style="background: linear-gradient(135deg, #f5c4a0, #a54724);">
+          <div class="course-body">
+            <h3 class="course-title">Intro to Quantum Computing</h3>
+            <div class="course-meta">
+              <span class="course-rating">⭐ 4.85</span>
+              <span class="muted text-xs">9 lessons · Beginner</span>
+            </div>
+          </div>
+        </a>
+        <a class="course-card" href="adaptive-quiz.html" style="background: linear-gradient(135deg, #ffe4d0, #c6872c);">
+          <div class="course-body">
+            <h3 class="course-title">Persuasive Speaking</h3>
+            <div class="course-meta">
+              <span class="course-rating">⭐ 4.75</span>
+              <span class="muted text-xs">14 lessons · Lectures</span>
+            </div>
+          </div>
+        </a>
+        <a class="course-card" href="adaptive-quiz.html" style="background: linear-gradient(135deg, #f0e6ff, #6c4fc5);">
+          <div class="course-body">
+            <h3 class="course-title">Yoga &amp; Mindfulness</h3>
+            <div class="course-meta">
+              <span class="course-rating">⭐ 5.0</span>
+              <span class="muted text-xs">5 lessons · Guides</span>
+            </div>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <!-- ===== Social feed preview ===== -->
+    <section class="pad-top-8 pad-x-6">
+      <div class="row wrap justify-between">
+        <h2 class="heading-lg">Your feed</h2>
+        <a class="btn btn--ghost" href="social-feed.html">See full feed →</a>
+      </div>
+      <div class="dash-grid pad-top-4">
+        <a class="feed-card" href="social-feed.html">
+          <div class="feed-thumb feed-thumb--1"></div>
+          <div class="feed-body">
+            <div class="row"><span class="badge">Tech</span><span class="badge">Science</span></div>
+            <h3 class="course-title" style="font-size: var(--text-body);">NVIDIA's Blackwell Push: Is the H100 Dead Yet?</h3>
+            <p class="muted text-sm">MoE pricing shifts ripple across the stack — a breakdown for engineers and learners.</p>
+            <div class="row wrap"><span class="badge">3.2k views</span></div>
+          </div>
+        </a>
+        <a class="feed-card" href="social-feed.html">
+          <div class="feed-thumb feed-thumb--2"></div>
+          <div class="feed-body">
+            <div class="row"><span class="badge">Sports</span><span class="badge">Culture</span></div>
+            <h3 class="course-title" style="font-size: var(--text-body);">The Oberlin Winter Classic: A Local Story</h3>
+            <p class="muted text-sm">Heart-warming recap of the ice arena finals, team sport, and community traditions.</p>
+            <div class="row wrap"><span class="badge">980 views</span></div>
+          </div>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      const btn = document.querySelector(".continue-card .thumb .play-btn");
+      if (btn && window.A) btn.innerHTML = window.A.icons.playCircle;
+    })();
+    document.getElementById("toast-complete").addEventListener("click", () => {
+      window.A.toast("Lesson marked complete. Progress ring nudged to 72%!", "success");
+    });
+  </script>
+</body>
+</html>

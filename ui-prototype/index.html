@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="description" content="Adaptive Learning Platform — personalized courses, adaptive quizzes, and social feed."/>
+  <title>Adaptive Learning Platform — UI Prototype</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"/>
+  <link rel="stylesheet" href="design-tokens.css"/>
+  <link rel="stylesheet" href="styles.css"/>
+  <script src="shell.js"></script>
+</head>
+<body>
+  <main class="container">
+    <section class="pad-top-8 pad-x-6">
+      <span class="status-pill status-pill--success">Interactive UI/UX prototype</span>
+      <h1 class="heading-xl">Adaptive Learning Platform</h1>
+      <p class="muted" style="font-size: var(--text-body-sm); line-height: 1.5;">
+        Personalized adaptive learning, live virtual classrooms, and secure parental oversight — designed to the EdX &amp; Coursera aesthetic standard.
+      </p>
+      <div class="row" style="margin-top: var(--space-5);">
+        <span class="badge">Design tokens</span>
+        <span class="badge">Primary: <span style="color: var(--color-text); font-weight: var(--weight-bold);">#EB7441</span> (EdX)</span>
+        <span class="badge">Typography: Inter</span>
+      </div>
+    </section>
+
+    <section class="grid grid--3 pad-top-8 gap-6 pad-x-6">
+      <a class="card" href="student-dashboard.html" style="display: flex; flex-direction: column; gap: var(--space-3); padding: var(--space-5) var(--space-6);">
+        <div class="row"><span class="role-badge role-badge--student">Student</span></div>
+        <h2 class="heading-md">Student Dashboard</h2>
+        <p class="muted text-sm">Adaptive learning path, continue-lesson banners, progress rings, social feed tab</p>
+        <span class="btn btn--primary" style="margin-top: auto; align-self: flex-start;">Open student dashboard</span>
+      </a>
+
+      <a class="card" href="course-player.html" style="display: flex; flex-direction: column; gap: var(--space-3); padding: var(--space-5) var(--space-6);">
+        <div class="row"><span class="role-badge role-badge--student">Student</span></div>
+        <h2 class="heading-md">Course Player</h2>
+        <p class="muted text-sm">Self-paced video player, lesson list, quizzes, assignments, progress tracking</p>
+        <span class="btn btn--primary" style="margin-top: auto; align-self: flex-start;">Open course player</span>
+      </a>
+
+      <a class="card" href="live-class.html" style="display: flex; flex-direction: column; gap: var(--space-3); padding: var(--space-5) var(--space-6);">
+        <div class="row"><span class="role-badge role-badge--tutor">Live class</span></div>
+        <h2 class="heading-md">Live Classroom</h2>
+        <p class="muted text-sm">Managed WebRTC room: participant tiles, chat, whiteboard, attendance, attendance lists</p>
+        <span class="btn btn--primary" style="margin-top: auto; align-self: flex-start;">Open live class</span>
+      </a>
+
+      <a class="card" href="adaptive-quiz.html" style="display: flex; flex-direction: column; gap: var(--space-3); padding: var(--space-5) var(--space-6);">
+        <div class="row"><span class="role-badge role-badge--student">Student</span></div>
+        <h2 class="heading-md">Adaptive Quiz</h2>
+        <p class="muted text-sm">Smart MCQ deck with pacing dots, per-question difficulty, explanations, mastery summaries</p>
+        <span class="btn btn--primary" style="margin-top: auto; align-self: flex-start;">Open adaptive quiz</span>
+      </a>
+
+      <a class="card" href="social-feed.html" style="display: flex; flex-direction: column; gap: var(--space-3); padding: var(--space-5) var(--space-6);">
+        <div class="row"><span class="role-badge role-badge--student">Student</span></div>
+        <h2 class="heading-md">Social Feed</h2>
+        <p class="muted text-sm">Preference-based feed (sports, tech, fashion, culture) with engagement metrics and interest chips</p>
+        <span class="btn btn--primary" style="margin-top: auto; align-self: flex-start;">Open social feed</span>
+      </a>
+
+      <a class="card" href="tutor-onboarding.html" style="display: flex; flex-direction: column; gap: var(--space-3); padding: var(--space-5) var(--space-6);">
+        <div class="row"><span class="role-badge role-badge--tutor">Tutor</span></div>
+        <h2 class="heading-md">Tutor Onboarding</h2>
+        <p class="muted text-sm">Step-by-step wizard: profile, availability, subjects, class arms (4th–6th wizard step with quiz preview)</p>
+        <span class="btn btn--primary" style="margin-top: auto; align-self: flex-start;">Open onboarding</span>
+      </a>
+
+      <a class="card" href="tutor-grading.html" style="display: flex; flex-direction: column; gap: var(--space-3); padding: var(--space-5) var(--space-6);">
+        <div class="row"><span class="role-badge role-badge--tutor">Tutor</span></div>
+        <h2 class="heading-md">Tutor Grading</h2>
+        <p class="muted text-sm">Grading queue with rubric scores, audio feedback players, written feedback, difficulty recommendations</p>
+        <span class="btn btn--primary" style="margin-top: auto; align-self: flex-start;">Open grading queue</span>
+      </a>
+
+      <a class="card" href="parent-sneak-peek.html" style="display: flex; flex-direction: column; gap: var(--space-3); padding: var(--space-5) var(--space-6);">
+        <div class="row"><span class="role-badge role-badge--parent">Parent</span></div>
+        <h2 class="heading-md">Parent Sneak Peek</h2>
+        <p class="muted text-sm">Time-boxed (120s) view-only stream, rate limits, weekly progress reports</p>
+        <span class="btn btn--primary" style="margin-top: auto; align-self: flex-start;">Open sneak peek</span>
+      </a>
+
+      <a class="card" href="admin-console.html" style="display: flex; flex-direction: column; gap: var(--space-3); padding: var(--space-5) var(--space-6);">
+        <div class="row"><span class="role-badge role-badge--admin">Admin</span></div>
+        <h2 class="heading-md">Admin Console</h2>
+        <p class="muted text-sm">User CRUD, role assignment, audit logs, guardrail policy editor, billing</p>
+        <span class="btn btn--primary" style="margin-top: auto; align-self: flex-start;">Open console</span>
+      </a>
+    </section>
+
+    <section class="card pad-6 pad-x-6 mt-8" style="max-width: 860px; margin-inline: auto; display: grid; grid-template-columns: 1fr auto; gap: var(--space-6); align-items: center;">
+      <div>
+        <h2 class="heading-sm">Design system notes</h2>
+        <p class="muted text-sm">Colors: light mode — bg <code style="color: var(--color-text-dim)">#F9F8F6</code>, text <code style="color: var(--color-text-dim)">#1C1E21</code>, primary <code style="color: var(--color-text)">#EB7441</code>, secondary <code style="color: var(--color-secondary)">#0056D2</code>, success <code style="color: var(--color-text)">#28A745</code>. Dark mode with EdX-style warm accents. Spacing: 4px base; radius: 2–16px; elevations: 4–5 soft shadows; animation: 150–400ms ease-out.</p>
+      </div>
+      <button class="btn" id="toggle-dark" style="margin-top: 8px;">Switch to dark</button>
+    </section>
+  </main>
+
+  <script>
+    document.getElementById("toggle-dark").addEventListener("click", () => {
+      if (document.documentElement.dataset.theme === "dark") {
+        document.documentElement.dataset.theme = "light"; localStorage.setItem("al-theme", "light");
+      } else {
+        document.documentElement.dataset.theme = "dark"; localStorage.setItem("al-theme", "dark");
+      }
+    });
+  </script>
+</body>
+</html>

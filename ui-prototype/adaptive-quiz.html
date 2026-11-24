@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="description" content="Adaptive multiple-choice quiz with pacing, hints, and explanations."/>
+  <title>Adaptive Quiz — Adaptive Learning Platform</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"/>
+  <link rel="stylesheet" href="design-tokens.css"/>
+  <link rel="stylesheet" href="styles.css"/>
+  <script src="shell.js"></script>
+  <style>
+    .progress-dot { width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--color-border-strong); display: inline-block; margin-right: 6px; background: transparent; transition: background var(--t-fast), border-color var(--t-fast); }
+    .progress-dot.is-done { background: var(--color-success); border-color: var(--color-success); }
+    .progress-dot.is-active { border-color: var(--color-primary); box-shadow: 0 0 0 3px var(--color-primary-bg); }
+    .question-progress { margin: var(--space-3) 0; }
+    .hint-panel { margin-top: var(--space-3); padding: var(--space-4); background: var(--color-surface-2); border-radius: var(--radius-md); border: 1px dashed var(--color-border-strong); }
+    .quiz-footer { margin-top: var(--space-6); padding-top: var(--space-4); border-top: 1px solid var(--color-border-subtle); display: flex; justify-content: space-between; flex-wrap: wrap; gap: var(--space-3); }
+  </style>
+</head>
+<body data-role="student" data-active="quiz">
+
+  <main class="container">
+    <!-- Header -->
+    <section class="pad-top-8 pad-x-6">
+      <h1 class="heading-lg">Adaptive Quiz</h1>
+      <div class="row wrap mt-2">
+        <span class="badge">Calculus I — Limits and Continuity</span>
+        <span class="badge">Live assessment</span>
+        <span class="badge">5 questions · adaptive difficulty</span>
+      </div>
+      <div class="row mt-3">
+        <div class="progress-ring" style="--progress-deg: 40deg; --ring-size: 40px;"><span class="ring-label">2/5</span></div>
+      </div>
+      <div class="question-progress" role="list" aria-label="Question progress">
+        <span class="progress-dot is-done" role="listitem" aria-label="Q1 answered"></span>
+        <span class="progress-dot is-active" role="listitem" aria-label="Q2 current"></span>
+        <span class="progress-dot" role="listitem" aria-label="Q3 pending"></span>
+        <span class="progress-dot" role="listitem" aria-label="Q4 pending"></span>
+        <span class="progress-dot" role="listitem" aria-label="Q5 pending"></span>
+      </div>
+    </section>
+
+    <!-- Active question -->
+    <section class="pad-top-8 pad-x-6">
+      <div class="quiz-question">
+        <div class="row wrap justify-between">
+          <span class="badge">Question 2 of 5</span>
+          <span class="badge">Difficulty: Hard</span>
+        </div>
+        <h2 class="heading-md" style="margin-top: var(--space-4);">Which sequence theorem applies when terms are squeezed between two null sequences?</h2>
+        <p class="muted text-sm mt-3">Given sequences aₙ = 1/n², bₙ = 2/n², and cₙ = 1.5/n²…</p>
+
+        <div class="quiz-options">
+          <label class="quiz-option is-selected" role="radio" aria-checked="true">
+            <span class="radio"></span><span>Weierstrass Extreme Value Theorem</span>
+          </label>
+          <label class="quiz-option" role="radio" aria-checked="false">
+            <span class="radio"></span><span>Cauchy Convergence Criterion</span>
+          </label>
+          <label class="quiz-option is-correct" role="radio" aria-checked="true">
+            <span class="radio"></span><span>Squeeze Theorem</span>
+          </label>
+          <label class="quiz-option is-wrong" role="radio" aria-checked="false">
+            <span class="radio"></span><span>Intermediate Value Theorem</span>
+          </label>
+        </div>
+
+        <div class="hint-panel" role="status" aria-live="polite">
+          <div class="row"><span class="badge">Hint — uses 1 energy point</span></div>
+          <p class="muted text-sm mt-2">Recall that the squeeze theorem applies when two outer sequences converge to the same limit L and a third sequence lies between them near that point. <span class="bold">Try selecting the option that matches that definition.</span></p>
+        </div>
+
+        <div class="explanation" role="status">
+          Correct: the Squeeze Theorem — if aₙ ≤ bₙ ≤ cₙ for large n and lim aₙ = lim cₙ = L, then lim bₙ = L. The Outer sequences converge to zero, so bₙ → 0 as well.
+        </div>
+
+        <div class="row wrap" style="margin-top: var(--space-4);">
+          <button class="btn btn--ghost" id="q-prev" disabled aria-disabled="true">Previous</button>
+          <button class="btn btn--primary" id="q-reveal">Confirm answer</button>
+          <button class="btn btn--ghost" id="q-hint">Use a hint</button>
+          <button class="btn btn--ghost" id="q-skip">Skip question</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Quiz footer: summary + adaptive next-difficulty suggestion -->
+    <section class="pad-top-8 pad-x-6">
+      <div class="quiz-footer">
+        <div class="muted text-sm">Mastery: 2/5 correct · avg time 1:14 per question · answer speed up to improve pacing</div>
+        <div class="row wrap">
+          <span class="status-pill status-pill--success">Recommended next: Very Hard after review</span>
+          <span class="badge">Streak: 3 questions solved in-trend</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    document.getElementById("q-prev").disabled = true;
+    ["q-reveal", "q-hint", "q-skip", "q-prev"].forEach((id) => {
+      document.getElementById(id).addEventListener("click", () => {
+        window.A.toast("Quiz action: " + id + " — moving to next question", "info");
+      });
+    });
+  </script>
+</body>
+</html>

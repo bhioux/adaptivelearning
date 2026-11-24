@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="description" content="Mobile admin console — tabbed users, roles, audit, and billing."/>
+  <title>Admin Console — Mobile</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"/>
+  <link rel="stylesheet" href="../design-tokens.css"/>
+  <link rel="stylesheet" href="../styles.css"/>
+  <link rel="stylesheet" href="styles.css"/>
+  <script src="../shell.js"></script>
+  <style>
+    .phone-body { padding: var(--space-4); }
+    .console-tabs-m { display: flex; gap: var(--space-2); border-bottom: 1px solid var(--color-border-subtle); padding: var(--space-3) 0; margin-bottom: var(--space-3); }
+    .console-tabs-m .tab { font-size: var(--text-body-xs); font-weight: var(--weight-semibold); padding: var(--space-2); border-bottom: 2px solid transparent; }
+    .console-tabs-m .tab.is-active { color: var(--color-text); border-bottom-color: var(--color-action); }
+    .stats-m { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); }
+    .stat-row { display: flex; flex-direction: column; gap: 2px; padding: var(--space-3); border: 1px solid var(--color-border-subtle); border-radius: var(--radius-lg); background: var(--color-surface); }
+    .stat-row .v { font-size: var(--text-display-md); font-weight: var(--weight-bold); }
+    .stat-row .l { font-size: var(--text-caption); text-transform: uppercase; letter-spacing: 0.04em; color: var(--color-text-dim); }
+    .audit-row { display: flex; gap: var(--space-3); align-items: center; padding: var(--space-3); border-bottom: 1px solid var(--color-border-subtle); }
+    .audit-row .actor { font-size: var(--text-body-sm); font-weight: var(--weight-semibold); }
+    .audit-row .action { font-size: var(--text-caption); color: var(--color-text-muted); }
+    .audit-row .ts { font-size: var(--text-caption); color: var(--color-text-dim); margin-right: auto; }
+  </style>
+</head>
+<body>
+  <div class="phone-frame">
+    <div class="status-bar">11:11 AM</div>
+    <main class="phone-body">
+      <div class="app-nav">
+        <button class="back-btn" aria-label="Back"><span class="icon icon-sm"></span></button>
+        <span class="app-nav-title">Admin console</span>
+        <span class="app-nav-right"></span>
+      </div>
+
+      <div class="console-tabs-m" role="tablist">
+        <span class="tab is-active" data-tab="users" role="tab">Users</span>
+        <span class="tab" data-tab="roles" role="tab">Roles</span>
+        <span class="tab" data-tab="audit" role="tab">Audit</span>
+      </div>
+
+      <div class="stats-m">
+        <div class="stat-row"><span class="v">354</span><span class="l">Users</span></div>
+        <div class="stat-row"><span class="v">42</span><span class="l">Classes</span></div>
+        <div class="stat-row"><span class="v">$12.5k</span><span class="l">Payouts</span></div>
+        <div class="stat-row"><span class="v">3</span><span class="l">Violations</span></div>
+      </div>
+
+      <div class="table-wrap">
+        <table class="table">
+          <thead><tr><th>User</th><th>Role</th><th style="text-align: right;">Actions</th></tr></thead>
+          <tbody>
+            <tr><td><div class="row"><span class="avatar avatar--sm">MC</span><span class="text-sm">Maya Chen</span></div></td><td><span class="role-badge role-badge--tutor">Tutor</span></td><td style="text-align: right;"><button class="btn btn--ghost btn--sm">Edit</button></td></tr>
+            <tr><td><div class="row"><span class="avatar avatar--sm">SP</span><span class="text-sm">Samira Patel</span></div></td><td><span class="role-badge role-badge--student">Student</span></td><td style="text-align: right;"><button class="btn btn--ghost btn--sm">Edit</button></td></tr>
+            <tr><td><div class="row"><span class="avatar avatar--sm">RS</span><span class="text-sm">Roberto Sura</span></div></td><td><span class="role-badge role-badge--parent">Parent</span></td><td style="text-align: right;"><button class="btn btn--ghost btn--sm">Edit</button></td></tr>
+            <tr><td><div class="row"><span class="avatar avatar--sm">AL</span><span class="text-sm">Ada Lovelace</span></div></td><td><span class="role-badge role-badge--admin">Admin</span></td><td style="text-align: right;"><button class="btn btn--ghost btn--sm">Edit</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="audit-row">
+        <span class="ts">Nov 19 14:03</span><span class="actor">Maya Chen</span><span class="action">Saved rubric feedback</span>
+      </div>
+      <div class="audit-row">
+        <span class="ts">Nov 19 12:55</span><span class="actor">Ada Lovelace</span><span class="action">Edited guardrail policy</span>
+      </div>
+      <div class="audit-row">
+        <span class="ts">Nov 19 11:02</span><span class="actor">Anonymous</span><span class="action">Granted 2FA to Maya Chen</span>
+      </div>
+    </main>
+    <div class="home-indicator"></div>
+  </div>
+  <script>
+    (function () {
+      const A = window.A;
+      document.querySelectorAll(".back-btn .icon").forEach((s) => { s.innerHTML = A.icons.arrowLeft; });
+      document.querySelectorAll(".console-tabs-m .tab").forEach((t) => {
+        t.addEventListener("click", () => {
+          document.querySelectorAll(".console-tabs-m .tab").forEach((x) => x.classList.remove("is-active"));
+          t.classList.add("is-active");
+          window.A.toast("Filtered console: " + t.textContent, "info");
+        });
+      });
+      document.querySelectorAll(".table button").forEach((b) => {
+        b.addEventListener("click", () => window.A.toast("Edit " + b.closest("tr").textContent.trim().slice(0, 40), "success"));
+      });
+    })();
+  </script>
+</body>
+</html>

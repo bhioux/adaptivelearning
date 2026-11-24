@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="description" content="Adaptive learning path on mobile — continue lesson, stats, courses, and feed."/>
+  <title>Student Dashboard — Mobile</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"/>
+  <link rel="stylesheet" href="../design-tokens.css"/>
+  <link rel="stylesheet" href="../styles.css"/>
+  <link rel="stylesheet" href="styles.css"/>
+  <script src="../shell.js"></script>
+  <style>
+    .phone-body { padding: var(--space-4) var(--space-5); }
+    .continue-card { border: none; color: #fff; border-radius: var(--radius-xl); overflow: hidden; position: relative; }
+    .continue-card .thumb { aspect-ratio: 3/2; display: flex; align-items: flex-end; padding: var(--space-4); background: linear-gradient(135deg, var(--color-primary-light), var(--color-secondary-light)); }
+    .continue-card .thumb .circle-play { width: 52px; height: 52px; border-radius: 50%; background: rgba(255,255,255,0.95); display: inline-flex; align-items: center; justify-content: center; }
+    .continue-card .thumb .circle-play .icon { width: 24px; height: 24px; color: var(--color-text); }
+    .continue-card .body { padding: var(--space-4); display: flex; flex-direction: column; gap: var(--space-3); }
+    .stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-4); margin: var(--space-4) 0; }
+    .stat-small .v { font-size: var(--text-display-md); font-weight: var(--weight-bold); margin-bottom: 2px; }
+    .stat-small .l { font-size: var(--text-caption); text-transform: uppercase; letter-spacing: 0.04em; color: var(--color-text-dim); }
+    .course-card-m { border: 1px solid var(--color-border-subtle); border-radius: var(--radius-lg); background: var(--color-surface); display: grid; grid-template-columns: 70px 1fr; overflow: hidden; box-shadow: var(--shadow-sm); margin-bottom: var(--space-3); }
+    .course-card-m .thumb { aspect-ratio: 1/1; background: linear-gradient(135deg, #e6c9e3, #f5e0d2); display: flex; align-items: flex-end; padding: var(--space-3); font-size: var(--text-caption); font-weight: var(--weight-semibold); color: #fff; }
+    .course-card-m .body { padding: var(--space-3); display: flex; flex-direction: column; gap: 2px; }
+    .course-card-m .body h4 { font-size: var(--text-body); margin: 0; }
+    .feed-card-m { display: grid; grid-template-columns: 64px 1fr; border: 1px solid var(--color-border-subtle); border-radius: var(--radius-lg); background: var(--color-surface); margin-bottom: var(--space-3); overflow: hidden; }
+    .feed-card-m .fc-thumb { aspect-ratio: 1.2/1; background: linear-gradient(135deg, var(--color-surface-2), var(--color-surface-3)); display: flex; align-items: center; justify-content: center; color: var(--color-text-muted); font-size: var(--text-caption); }
+    .feed-card-m .fc-body { padding: var(--space-3); display: flex; flex-direction: column; gap: var(--space-2); }
+    .feed-card-m .fc-body h4 { font-size: var(--text-body); margin: 0; font-weight: var(--weight-semibold); }
+    .feed-card-m .fc-body .engage { font-size: var(--text-caption); color: var(--color-text-dim); }
+  </style>
+</head>
+<body>
+  <div class="phone-frame">
+    <div class="status-bar">9:41 AM</div>
+    <main class="phone-body">
+      <div class="app-nav">
+        <button class="back-btn" aria-label="Back"><span class="icon icon-sm"></span></button>
+        <span class="app-nav-title">Your progress</span>
+        <span class="app-nav-right"><span class="search"></span></span>
+      </div>
+
+      <!-- Continue lesson -->
+      <div class="continue-card">
+        <div class="thumb">
+          <span class="circle-play" role="button" aria-label="Resume lesson"><span class="icon"></span></span>
+        </div>
+        <div class="body">
+          <h3 class="heading-md">Calculus I — Limits and Continuity</h3>
+          <div class="muted text-sm">Prof. Sedgewick · Continue where you left off</div>
+          <div class="progress-bar"><div class="bar" style="width: 68%"></div></div>
+          <div class="row wrap">
+            <button class="btn btn--primary btn--sm">Resume</button>
+            <button class="btn btn--ghost btn--sm" id="toast-m">Mark complete</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats">
+        <div class="stat-small"><span class="v">58%</span><span class="l">Progress</span></div>
+        <div class="stat-small"><span class="v">12</span><span class="l">Lessons/week</span></div>
+        <div class="stat-small"><span class="v">3</span><span class="l">Streak</span></div>
+        <div class="stat-small"><span class="v">20</span><span class="l">Hours remaining</span></div>
+      </div>
+
+      <!-- Continue learning -->
+      <div class="m-title-row"><h4 class="heading-sm">Continue learning</h4><button class="btn btn--ghost btn--sm">View more</button></div>
+      <div class="m-grid-2" style="margin-top: var(--space-3);">
+        <a class="course-card-m" href="course-player.html">
+          <div class="thumb">Calculus I</div>
+          <div class="body"><h4>Calculus I: Limits &amp; Continuity</h4><div class="muted text-xs">⭐ 4.8 · 12 lessons</div></div>
+        </a>
+        <a class="course-card-m" href="adaptive-quiz.html">
+          <div class="thumb">Quiz</div>
+          <div class="body"><h4>Adaptive quiz: Introduction</h4><div class="muted text-xs">8 questions · 10 min</div></div>
+        </a>
+      </div>
+
+      <!-- Feed preview -->
+      <div class="m-title-row"><h4 class="heading-sm">Your feed</h4><button class="btn btn--ghost btn--sm">See full feed</button></div>
+      <div class="m-grid-feed">
+        <a class="feed-card-m" href="social-feed.html">
+          <div class="fc-thumb"></div>
+          <div class="fc-body"><h4>NVIDIA's Blackwell Push — is H100 dead yet?</h4><div class="engage">Tech · 2.4k views</div></div>
+        </a>
+        <a class="feed-card-m" href="social-feed.html">
+          <div class="fc-thumb"></div>
+          <div class="fc-body"><h4>The Oberlin Winter Classic — a local story</h4><div class="engage">Sports · 980 views</div></div>
+        </a>
+      </div>
+    </main>
+    <div class="home-indicator"></div>
+  </div>
+  <script>
+    (function () {
+      const A = window.A;
+      document.querySelectorAll(".back-btn .icon").forEach((s) => { s.innerHTML = A.icons.arrowLeft; });
+      document.querySelector(".continue-card .thumb .circle-play .icon").innerHTML = A.icons.playCircle;
+      document.querySelectorAll(".app-nav-right .search").forEach((s) => { s.innerHTML = A.icons.search; });
+      document.getElementById("toast-m").addEventListener("click", () => A.toast("Lesson marked complete!", "success"));
+    })();
+  </script>
+</body>
+</html>

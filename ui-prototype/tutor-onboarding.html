@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="description" content="Tutor onboarding wizard: profile, subjects, class arms, quiz preview."/>
+  <title>Tutor Onboarding — Adaptive Learning Platform</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"/>
+  <link rel="stylesheet" href="design-tokens.css"/>
+  <link rel="stylesheet" href="styles.css"/>
+  <script src="shell.js"></script>
+  <style>
+    .wizard-card { display: none; padding: var(--space-6); }
+    .wizard-card.is-active { display: block; }
+    .quiz-cards { display: flex; flex-direction: column; gap: var(--space-3); }
+    .wiz-footer { display: flex; gap: var(--space-3); justify-content: space-between; padding-top: var(--space-4); border-top: 1px solid var(--color-border-subtle); margin-top: var(--space-5); }
+    .step-title { margin-bottom: var(--space-5); }
+    .arm-preview { display: flex; gap: var(--space-3); flex-wrap: wrap; }
+    .arm-preview .chip.is-selected { background: var(--color-primary); color: #fff; }
+  </style>
+</head>
+<body data-role="tutor" data-active="portal">
+
+  <main class="container">
+    <!-- Steps bar -->
+    <section class="pad-top-8 pad-x-6">
+      <h1 class="heading-lg">Tutor onboarding</h1>
+      <p class="muted text-sm mt-2">Become a certified tutor: profile, subjects, class arms, quiz preview.</p>
+      <div class="wizard-steps mt-4" id="wizard-steps">
+        <span class="wizard-step is-active" data-step="1"><span class="step-dot">1</span></span>
+        <span class="sep">—</span>
+        <span class="wizard-step" data-step="2"><span class="step-dot">2</span></span>
+        <span class="sep">—</span>
+        <span class="wizard-step" data-step="3"><span class="step-dot">3</span></span>
+        <span class="sep">—</span>
+        <span class="wizard-step" data-step="4"><span class="step-dot">4</span></span>
+        <span class="sep">—</span>
+        <span class="wizard-step" data-step="5"><span class="step-dot">5</span></span>
+        <span class="sep">—</span>
+        <span class="wizard-step" data-step="6"><span class="step-dot">6</span></span>
+      </div>
+      <div class="wizard-title" id="wizard-title" style="font-weight: var(--weight-semibold);">Step 1 — Personal profile</div>
+    </section>
+
+    <!-- Step 1: Personal profile -->
+    <section class="pad-top-8 pad-x-6">
+      <div class="card wizard-card is-active" data-step="1">
+        <div class="step-title">
+          <h2 class="heading-md">Step 1 · Personal profile</h2>
+          <p class="muted text-sm">Set up your public tutor page and tell learners about your teaching style.</p>
+        </div>
+        <form class="form-grid">
+          <label class="form-field">
+            <span class="field-label">Profile photo</span>
+            <div class="dashed-box" style="min-height: 180px;">
+              <div class="upload-hint">
+                <span class="badge">Drag and drop a profile photo</span>
+                <span class="badge">or click to upload</span>
+              </div>
+              <div class="muted text-xs mt-2">Square aspect, 512×512 px, JPG/PNG, max 5 MB</div>
+            </div>
+          </label>
+          <div class="form-grid form-grid--2">
+            <label class="form-field"><span class="field-label">First name</span><input class="input" placeholder="Maya" aria-label="First name"/></label>
+            <label class="form-field"><span class="field-label">Last name</span><input class="input" placeholder="Chen" aria-label="Last name"/></label>
+          </div>
+          <label class="form-field"><span class="field-label">Email</span><input class="input" placeholder="maya.chen@adaptivelearning.com" aria-label="Email"/></label>
+          <label class="form-field"><span class="field-label">Headline</span><input class="input" placeholder="10 years tutoring middle &amp; high school math…" aria-label="Headline"/></label>
+          <label class="form-field"><span class="field-label">Bio</span><textarea class="textarea" rows="4" placeholder="Tell learners about your teaching style, materials, and favorite resources." aria-label="Bio"></textarea></label>
+          <div class="form-field">
+            <span class="field-label">Availability</span>
+            <div class="row wrap">
+              <div class="toggle is-on"><input type="checkbox" aria-label="Evening sessions (after 5pm)" checked/><span class="knob"></span></div><label>Evening sessions (after 5pm)</label>
+              <div class="toggle"><input type="checkbox" aria-label="Weekend availability"/><span class="knob"></span></div><label>Weekend availability</label>
+              <div class="toggle"><input type="checkbox" aria-label="Late-night review sessions"/><span class="knob"></span></div><label>Late-night review sessions</label>
+            </div>
+          </div>
+        </form>
+        <div class="wiz-footer">
+          <span class="muted text-sm">Drafts save automatically</span>
+          <div class="row"><button class="btn btn--ghost" data-prev disabled>Back</button><button class="btn btn--primary" id="wiz-next">Continue</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Step 2: Subjects -->
+    <section class="pad-top-8 pad-x-6">
+      <div class="card wizard-card" data-step="2">
+        <div class="step-title">
+          <h2 class="heading-md">Step 2 · Subjects &amp; interests</h2>
+          <p class="muted text-sm">What do you teach? We match students to tutors by subject and grade level.</p>
+        </div>
+        <form class="form-grid">
+          <label class="form-field"><span class="field-label">Primary subject</span>
+            <select class="select" aria-label="Primary subject"><option>Calculus</option><option>Linear Algebra</option><option>Statistics</option><option>Physics</option><option>Chemistry</option><option>Biology</option><option>Computer Science</option><option>History</option><option>Economics</option><option>Chemistry</option></select></label>
+          <div class="form-field"><span class="field-label">Grade levels I teach</span>
+            <div class="row wrap">
+              <span class="chip chip--selected">11–12</span><span class="chip chip--alternate">AP Calc BC</span><span class="chip chip--alternate">College Intro</span>
+            </div>
+          </div>
+          <div class="form-field"><span class="field-label">Teaching interests</span>
+            <div class="row wrap">
+              <span class="chip chip--selected">Calculus</span><span class="chip chip--alternate">Linear Algebra</span><span class="chip chip--alternate">Statistics</span><span class="chip chip--alternate">Problem solving</span><span class="chip chip--alternate">Study strategies</span>
+            </div>
+          </div>
+          <label class="form-field"><span class="field-label">Years of experience</span><input class="input" placeholder="10+" aria-label="Years of experience"/></label>
+          <label class="form-field"><span class="field-label">Comfortable hour range</span>
+            <div class="row wrap">
+              <span class="chip chip--alternate">16:00–22:00</span><span class="chip chip--alternate">Evenings</span><span class="chip chip--alternate">Weekends</span>
+            </div>
+          </label>
+        </form>
+        <div class="wiz-footer">
+          <span class="muted text-sm">Profile saved as draft</span>
+          <div class="row"><button class="btn btn--ghost" data-prev>Back</button><button class="btn btn--primary" id="wiz-next">Continue</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Step 3: Class arms -->
+    <section class="pad-top-8 pad-x-6">
+      <div class="card wizard-card" data-step="3">
+        <div class="step-title">
+          <h2 class="heading-md">Step 3 · Class arms</h2>
+          <p class="muted text-sm">Set up one or more classes with arms — structured cohorts with configured quiz behavior.</p>
+        </div>
+        <div class="form-grid form-grid--2">
+          <label class="form-field"><span class="field-label">Class name</span><input class="input" placeholder="Calculus 101 · Fall 2026" aria-label="Class name"/></label>
+          <label class="form-field"><span class="field-label">Subject</span>
+            <select class="select" aria-label="Subject"><option>Calculus I</option><option>Calculus II</option><option>Linear Algebra</option><option>Statistics</option></select></label>
+          <label class="form-field"><span class="field-label">Arm name</span><input class="input" placeholder="Evening Arm · Prof. Chen" aria-label="Arm name"/></label>
+          <label class="form-field"><span class="field-label">Course code</span><input class="input" placeholder="CAL-101" aria-label="Course code"/></label>
+        </div>
+        <div class="mt-4">
+          <div class="muted text-sm mb-2">Arm policy</div>
+          <div class="arm-preview">
+            <span class="chip chip--alternate">Parents join via link</span><span class="chip chip--alternate">Live sessions recorded</span><span class="chip chip--alternate">Enable stealth sneak-peek (view-only, 120s)</span>
+          </div>
+        </div>
+        <div class="mt-4" style="margin-top: var(--space-4);">
+          <div class="row wrap">
+            <span class="muted text-sm">Student cap per arm</span>
+            <input class="input" style="max-width: 140px;" value="24" aria-label="Student cap per arm"/>
+          </div>
+        </div>
+        <div class="wiz-footer">
+          <span class="muted text-sm">Drafts auto-save</span>
+          <div class="row"><button class="btn btn--ghost" data-prev>Back</button><button class="btn btn--primary" id="wiz-next">Add arm &amp; continue</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Step 4: Quiz preview -->
+    <section class="pad-top-8 pad-x-6">
+      <div class="card wizard-card" data-step="4">
+        <div class="step-title">
+          <h2 class="heading-md">Step 4 · Sample quiz preview</h2>
+          <p class="muted text-sm">Preview how adaptive quizzes will render for your students.</p>
+        </div>
+        <div class="quiz-cards">
+          <a class="card" href="adaptive-quiz.html">
+            <div style="flex: 1; min-width: 0;">
+              <h4 class="course-title">Calculus I — Limits &amp; Continuity</h4>
+              <div class="muted text-xs mt-2">8 questions · ~10 min · Adaptive</div>
+            </div>
+            <div class="row"><span class="status-pill--warning">Preview</span><button class="btn btn--ghost">Preview →</button></div>
+          </a>
+          <a class="card" href="adaptive-quiz.html">
+            <div style="flex: 1; min-width: 0;">
+              <h4 class="course-title">Calculus II — Integration by Parts</h4>
+              <div class="muted text-xs mt-2">7 questions · ~9 min · Standard</div>
+            </div>
+            <div class="row"><span class="status-pill--warning">Preview</span><button class="btn btn--ghost">Preview →</button></div>
+          </a>
+        </div>
+        <div class="wiz-footer">
+          <span class="muted text-sm">Adaptive pacing adjusts after each answer</span>
+          <div class="row"><button class="btn btn--ghost" data-prev>Back</button><button class="btn btn--primary" id="wiz-next">Continue</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Step 5: Payout & notification settings -->
+    <section class="pad-top-8 pad-x-6">
+      <div class="card wizard-card" data-step="5">
+        <div class="step-title">
+          <h2 class="heading-md">Step 5 · Payout &amp; notification settings</h2>
+          <p class="muted text-sm">Admin review queues your application; email on approval.</p>
+        </div>
+        <div class="form-grid">
+          <label class="form-field"><span class="field-label">Hourly rate ($/hr)</span><input class="input" placeholder="42.00" aria-label="Hourly rate"/></label>
+          <label class="form-field"><span class="field-label">Weekly payout cap ($)</span><input class="input" placeholder="800" aria-label="Weekly payout cap"/></label>
+        </div>
+        <div class="form-grid" style="margin-top: var(--space-5);">
+          <div class="form-field"><span class="field-label">Notifications</span>
+            <div class="row wrap">
+              <div class="toggle"><input type="checkbox" aria-label="Approval email" checked/><span class="knob"></span></div><label>Approval email (Resend)</label>
+              <div class="toggle"><input type="checkbox" aria-label="Session reminders"/><span class="knob"></span></div><label>Session reminders (Push)</label>
+              <div class="toggle"><input type="checkbox" aria-label="Grading summaries"/><span class="knob"></span></div><label>Grading summaries (OneSignal)</label>
+            </div>
+          </div>
+          <div class="form-field"><span class="field-label">Documents on file</span>
+            <div class="row wrap">
+              <span class="badge">Tutor agreement</span><span class="badge">Tax forms</span><span class="badge">ID verification · pending</span>
+            </div>
+          </div>
+        </div>
+        <div class="wiz-footer">
+          <span class="muted text-sm">Payouts: weekly to verified account</span>
+          <div class="row"><button class="btn btn--ghost" data-prev>Back</button><button class="btn btn--primary" id="wiz-next">Continue</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Step 6: Admin console link -->
+    <section class="pad-top-8 pad-x-6">
+      <div class="card wizard-card" data-step="6">
+        <div class="step-title">
+          <h2 class="heading-md">Step 6 · Platform admin link</h2>
+          <p class="muted text-sm">You'll use the platform admin console to manage classes, students, and audits.</p>
+        </div>
+        <div class="form-grid">
+          <div class="form-field"><span class="field-label">Confirmed role</span>
+            <div class="row wrap">
+              <span class="chip chip--selected">tutor</span><span class="chip chip--alternate">student</span><span class="chip chip--alternate">parent</span><span class="chip chip--alternate">admin</span>
+            </div>
+          </div>
+          <div class="form-field"><span class="field-label">Classes (start typing to search)</span>
+            <div class="row wrap">
+              <span class="chip chip--alternate">Calculus 101 · Fall 2026 <span aria-hidden="true">×</span></span>
+              <span class="chip chip--alternate">+ Add class</span>
+            </div>
+          </div>
+        </div>
+        <div class="wiz-footer">
+          <span class="muted text-sm">Submission queues admin review</span>
+          <div class="row"><button class="btn btn--ghost" data-prev>Back</button><button class="btn btn--primary" id="wiz-submit">Submit application</button></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      const titles = { 1: "Personal profile", 2: "Subjects & interests", 3: "Class arms", 4: "Sample quiz preview", 5: "Payout & notification settings", 6: "Platform admin link" };
+      const steps = Array.from(document.querySelectorAll("[data-step]"));
+      const title = document.getElementById("wizard-title");
+      title.textContent = "Step 1 — Personal profile";
+
+      steps.forEach((el) => {
+        const n = +el.dataset.step;
+        el.addEventListener("click", () => {
+          steps.forEach((s) => { s.classList.remove("is-active", "is-done"); });
+          steps.slice(0, n).forEach((s) => s.classList.add("is-done"));
+          el.classList.add("is-active");
+          title.textContent = "Step " + n + " — " + titles[n];
+          document.querySelectorAll(".wizard-card").forEach((c) => c.classList.remove("is-active"));
+          document.querySelector('.wizard-card[data-step="' + n + '"]').classList.add("is-active");
+        });
+      });
+
+      document.querySelectorAll("[data-prev]").forEach((el) => {
+        el.addEventListener("click", () => {
+          const n = +el.closest("[data-step]").dataset.step - 1;
+          const prev = document.querySelector('[data-step="' + n + '"]');
+          if (prev) prev.click();
+        });
+      });
+
+      document.getElementById("wiz-submit").addEventListener("click", () => {
+        window.A.toast("Application submitted. Admin review queue processes your request within 5 business days.", "success");
+      });
+      document.querySelectorAll(".quiz-cards a[href]").forEach((el) => {
+        el.addEventListener("click", (e) => { e.preventDefault(); window.A.toast("Quiz preview ready: Adaptive pacing adjusts after each answer", "info"); });
+      });
+    })();
+  </script>
+</body>
+</html>

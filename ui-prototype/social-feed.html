@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="description" content="Preference-based social feed (sports, tech, fashion, culture) with engagement metrics."/>
+  <title>Social Feed — Adaptive Learning Platform</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"/>
+  <link rel="stylesheet" href="design-tokens.css"/>
+  <link rel="stylesheet" href="styles.css"/>
+  <script src="shell.js"></script>
+  <style>
+    .interest-chips { display: flex; gap: var(--space-2); margin-top: var(--space-3); flex-wrap: wrap; }
+    .feed-card .feed-thumb { background: linear-gradient(135deg, var(--color-surface-3), var(--color-primary-light)); }
+    .feed-card:hover { box-shadow: var(--shadow-md); }
+    .feed-card .feed-body { padding: var(--space-4); display: flex; flex-direction: column; gap: var(--space-3); }
+    .feed-card .feed-body .source { font-size: var(--text-caption); font-weight: var(--weight-semibold); color: var(--color-text-dim); margin-bottom: var(--space-1); }
+    .feed-card .feed-body .title { font-size: var(--text-heading-md); font-weight: var(--weight-semibold); line-height: 1.35; }
+    .feed-card .feed-body .blurb { font-size: var(--text-body-sm); color: var(--color-text-muted); line-height: 1.5; }
+    .feed-card .feed-body .engage { display: flex; gap: var(--space-3); align-items: center; color: var(--color-text-dim); font-size: var(--text-caption); margin-top: var(--space-2); }
+    .feed-card .feed-body .engage .row { gap: var(--space-1); }
+    .feed-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-5); }
+    .empty-interests { display: flex; gap: var(--space-2); }
+    @media (min-width: 640px) { .feed-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (min-width: 1024px) { .feed-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  </style>
+</head>
+<body data-role="student" data-active="feed">
+
+  <main class="container">
+    <!-- Interests -->
+    <section class="pad-top-8 pad-x-6">
+      <h1 class="heading-lg">Social Feed</h1>
+      <div class="muted text-sm mt-2">Interest-based feed — 2 stories from Sports, Tech, Fashion & Culture</div>
+      <div class="row wrap interest-chips mt-3" role="tablist" aria-label="Interest filter">
+        <span class="chip chip--selected" role="tab" tabindex="0">All</span>
+        <span class="chip chip--alternate" role="tab">Sports</span>
+        <span class="chip chip--alternate" role="tab">Tech</span>
+        <span class="chip chip--alternate" role="tab">Fashion</span>
+        <span class="chip chip--alternate" role="tab">Culture</span>
+        <span class="chip chip--alternate" role="tab">Arts</span>
+        <span class="chip chip--alternate" role="tab">Science</span>
+      </div>
+    </section>
+
+    <!-- Feed -->
+    <section class="pad-top-8 pad-x-6">
+      <div class="feed-grid" id="feed-grid">
+        <a class="feed-card" href="#">
+          <div class="feed-thumb"></div>
+          <div class="feed-body">
+            <div class="source">Tech</div>
+            <h2 class="title">The H100 Shadow: Blackwell's Quiet Dominance</h2>
+            <p class="blurb">How a stealthy redesign move across two chip families reshaped the datacenter market — for learners who want the why behind the headlines.</p>
+            <div class="engage">
+              <div class="row"><span class="muted">2.4k views</span></div>
+              <div class="row"><span class="muted">24 likes</span></div>
+              <div class="row"><span class="muted">7 comments</span></div>
+            </div>
+          </div>
+        </a>
+
+        <a class="feed-card" href="#">
+          <div class="feed-thumb" style="background: linear-gradient(135deg, #f4b5af, var(--color-warning));"></div>
+          <div class="feed-body">
+            <div class="source">Sports</div>
+            <h2 class="title">The Oberlin Winter Classic: A Local Story</h2>
+            <p class="blurb">Heart-warming recap of the ice arena finals — team sport, local traditions, and why community tournaments matter.</p>
+            <div class="engage">
+              <div class="row"><span class="muted">980 views</span></div>
+              <div class="row"><span class="muted">3 comments</span></div>
+              <div class="row"><span class="muted">Save</span></div>
+            </div>
+          </div>
+        </a>
+
+        <a class="feed-card" href="#">
+          <div class="feed-thumb"></div>
+          <div class="feed-body">
+            <div class="source">Culture</div>
+            <h2 class="title">Persistence Meets Patience: A Note on Creative Craft</h2>
+            <p class="blurb">A short reflection on what long-form study and slow creation have in common — with practical tips for learners.</p>
+            <div class="engage">
+              <div class="row"><span class="muted">1.1k views</span></div>
+              <div class="row"><span class="muted">41 likes</span></div>
+              <div class="row"><span class="muted">12 comments</span></div>
+            </div>
+          </div>
+        </a>
+      </div>
+
+      <button class="btn btn--ghost mt-6" id="feed-more">Load more stories</button>
+      <div class="empty-state" id="empty-state" style="display: none;">
+        <div class="empty-icon"></div>
+        <h4 class="empty-title">No stories in this feed yet</h4>
+        <p class="empty-desc">Your interests are still shaping this feed — join classes and rate stories to see more like this.</p>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const grid = document.getElementById("feed-grid");
+    document.querySelectorAll(".interest-chips [role='tab']").forEach((tab) =>
+      tab.addEventListener("click", () => {
+        document.querySelectorAll(".interest-chips [role='tab']").forEach((t) => t.classList.remove("chip--selected"));
+        tab.classList.add("chip--selected");
+        window.A.toast("Feed filter: " + tab.textContent, "info");
+      })
+    );
+    document.getElementById("feed-more").addEventListener("click", () =>
+      window.A.toast("More stories loading...", "info")
+    );
+  </script>
+</body>
+</html>

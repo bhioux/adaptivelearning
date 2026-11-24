@@ -1,0 +1,304 @@
+// Adaptive Learning Platform — production schema.
+// Mirrors the documented domain (doc.md) plus production additions:
+// refresh_tokens (JWT rotation), audit_logs (admin trail), class_enrollments
+// (arm enrollment), live_attendance (zoom-style join).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  STUDENT
+  TUTOR
+  PARENT
+  ADMIN
+}
+
+model users {
+  id                   String                @id @default(uuid())
+  email                String                @unique
+  password_hash        String
+  role                 Role
+  totp_secret          String?
+  is_totp_enabled      Boolean               @default(false)
+  created_at           DateTime              @default(now())
+  updated_at           DateTime              @updatedAt
+
+  parent_student_maps  parent_student_map[]  @relation("parentLink")
+  student_student_maps parent_student_map[]  @relation("studentLink")
+  class_enrollments    class_enrollments[]
+  live_attendance      live_attendance[]
+  class_arms_assigned  class_arms[] @relation("assignedTutor")
+  submissions          submissions[]
+  tutor_work_logs      tutor_work_logs[]
+  social_feed_prefs    social_feed_prefs[]
+  parent_sneak_peek_logs parent_sneak_peek_logs[]
+  refresh_tokens       refresh_tokens[]
+}
+
+model parent_student_map {
+  parent_id  String @map("parent_id")
+  student_id String @map("student_id")
+
+  parent  users @relation(fields: [parent_id], references: [id], name: "parentLink")
+  student users @relation(fields: [student_id], references: [id], name: "studentLink")
+
+  @@id([parent_id, student_id])
+}
+
+model classes {
+  id               String       @id @default(uuid())
+  name             String
+  code             String       @unique
+  description      String       @default("")
+  level            String       @default("")
+  parent_course_id String?      @map("parent_course_id")
+  is_published     Boolean      @default(false)
+  created_at       DateTime     @default(now())
+  updated_at       DateTime     @updatedAt
+
+  class_arms         class_arms[]
+  class_enrollments  class_enrollments[]
+  parent_course      classes?     @relation("parentCourse", fields: [parent_course_id], references: [id])
+  child_courses      classes[]    @relation("parentCourse")
+}
+
+model class_arms {
+  id                String          @id @default(uuid())
+  class_id          String          @map("class_id")
+  arm_name          String          @map("arm_name")
+  assigned_tutor_id String?         @map("assigned_tutor_id")
+  config            Json            @default("{}")
+  created_at        DateTime        @default(now())
+  updated_at        DateTime        @updatedAt
+
+  class          classes          @relation(fields: [class_id], references: [id])
+  assigned_tutor users?           @relation("assignedTutor", fields: [assigned_tutor_id], references: [id])
+  live_sessions  live_sessions[]
+}
+
+model live_sessions {
+  id           String    @id @default(uuid())
+  class_arm_id String    @map("class_arm_id")
+  room_id      String
+  started_at   DateTime  @default(now())
+  ended_at     DateTime?
+
+  class_arm class_arms @relation(fields: [class_arm_id], references: [id])
+  attendance   live_attendance[]
+  parent_sneak_peek_logs parent_sneak_peek_logs[]
+}
+
+model live_attendance {
+  id         String        @id @default(uuid())
+  session_id String        @map("session_id")
+  user_id    String        @map("user_id")
+  joined_at  DateTime      @default(now())
+
+  session    live_sessions @relation(fields: [session_id], references: [id])
+  user       users         @relation(fields: [user_id], references: [id])
+}
+
+model parent_sneak_peek_logs {
+  id               String        @id @default(uuid())
+  parent_id        String        @map("parent_id")
+  session_id       String        @map("session_id")
+  accessed_at      DateTime      @default(now())
+  duration_seconds Int
+  parent           users         @relation(fields: [parent_id], references: [id])
+  session          live_sessions @relation(fields: [session_id], references: [id])
+  @@index([session_id, parent_id])
+}
+
+model tutor_work_logs {
+  id             String    @id @default(uuid())
+  tutor_id       String    @map("tutor_id")
+  hours_worked   Float
+  rate_per_hour  Float     @map("rate_per_hour")
+  verified       Boolean   @default(false)
+  payout_status  String    @default("PENDING") @map("payout_status")
+  created_at     DateTime  @default(now())
+  updated_at     DateTime  @updatedAt
+  tutor          users     @relation(fields: [tutor_id], references: [id])
+}
+
+model courses {
+  id              String    @id @default(uuid())
+  title           String
+  slug            String    @unique
+  description     String    @default("")
+  level           String    @default("")
+  parent_course_id String?  @map("parent_course_id")
+  is_published    Boolean   @default(false)
+  created_at      DateTime  @default(now())
+  updated_at      DateTime  @updatedAt
+
+  modules       modules[]
+  parent_course  courses?  @relation("parentCourse", fields: [parent_course_id], references: [id])
+  child_courses  courses[] @relation("parentCourse")
+}
+
+model modules {
+  id          String   @id @default(uuid())
+  course_id   String   @map("course_id")
+  title       String
+  order       Int
+  content_url String?  @map("content_url")
+  video_url   String?  @map("video_url")
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  course      courses  @relation(fields: [course_id], references: [id])
+  lessons     lessons[]
+}
+
+model lessons {
+  id              String          @id @default(uuid())
+  module_id       String          @map("module_id")
+  title           String
+  order           Int
+  content         Json?
+  duration_seconds Int?           @map("duration_seconds")
+  created_at      DateTime        @default(now())
+  updated_at      DateTime        @updatedAt
+
+  module          modules         @relation(fields: [module_id], references: [id])
+  assessments     assessments[]
+  submissions     submissions[]
+}
+
+model assessments {
+  id            String    @id @default(uuid())
+  lesson_id     String    @map("lesson_id")
+  type          String
+  config        Json      @default("{}")
+  max_score     Float?    @map("max_score")
+  created_at    DateTime  @default(now())
+  updated_at    DateTime  @updatedAt
+
+  lesson        lessons   @relation(fields: [lesson_id], references: [id])
+  items         items[]
+}
+
+model items {
+  id             String        @id @default(uuid())
+  assessment_id  String        @map("assessment_id")
+  question       Json
+  options        Json          @default("[]")
+  correct_answer Json          @default("[]")
+  points         Float
+  difficulty     Int
+  explanation    String?
+  created_at     DateTime      @default(now())
+  updated_at     DateTime      @updatedAt
+
+  assessment     assessments   @relation(fields: [assessment_id], references: [id])
+}
+
+model submissions {
+  id                  String        @id @default(uuid())
+  lesson_id           String        @map("lesson_id")
+  student_id          String        @map("student_id")
+  answers             Json
+  score               Float?
+  status              String        @default("PENDING")
+  feedback            Json?
+  difficulty_intended Int?          @map("difficulty_intended")
+  submitted_at        DateTime?
+  graded_at           DateTime?
+  created_at          DateTime      @default(now())
+  updated_at          DateTime      @updatedAt
+
+  lesson              lessons       @relation(fields: [lesson_id], references: [id])
+  student             users         @relation(fields: [student_id], references: [id])
+
+  @@index([student_id, lesson_id])
+}
+
+model social_feed_prefs {
+  id            String    @id @default(uuid())
+  user_id       String    @map("user_id") @unique
+  topics        Json      @default("[]")
+  muted_sources Json      @default("[]")
+  created_at    DateTime  @default(now())
+  updated_at    DateTime  @updatedAt
+
+  user          users     @relation(fields: [user_id], references: [id])
+}
+
+model invoices {
+  id          String    @id @default(uuid())
+  customer_id String    @map("customer_id")
+  amount      Float
+  currency    String    @default("USD")
+  status      String    @default("PENDING")
+  created_at  DateTime  @default(now())
+  paid_at     DateTime?
+
+  @@index([customer_id])
+}
+
+model payouts {
+  id           String    @id @default(uuid())
+  tutor_id     String    @map("tutor_id")
+  amount       Float
+  method       String
+  status       String    @default("PENDING")
+  issued_at    DateTime? @default(now())
+  completed_at DateTime?
+  created_at   DateTime  @default(now())
+
+  @@index([tutor_id])
+}
+
+model scorm_xapi_records {
+  id         String   @id @default(uuid())
+  user_id    String   @map("user_id")
+  actor      String?
+  verb       String
+  object     String?
+  statement  Json
+  timestamp  DateTime @default(now())
+  created_at DateTime @default(now())
+}
+
+model refresh_tokens {
+  id         String   @id @default(uuid())
+  user_id    String   @map("user_id")
+  token_hash String   @unique
+  expires_at DateTime
+  user       users    @relation(fields: [user_id], references: [id])
+
+  @@index([user_id])
+}
+
+model audit_logs {
+  id         String   @id @default(uuid())
+  user_id    String?  @map("user_id")
+  user_email String?  @map("user_email")
+  action     String
+  entity     String
+  entity_id  String   @map("entity_id")
+  metadata   Json     @default("{}")
+  ip_address String?  @map("ip_address")
+  created_at DateTime @default(now())
+
+  @@index([user_id])
+}
+
+model class_enrollments {
+  id          String      @id @default(uuid())
+  class_id    String      @map("class_id")
+  user_id     String      @map("user_id")
+  enrolled_at DateTime    @default(now())
+
+  class       classes     @relation(fields: [class_id], references: [id])
+  user        users       @relation(fields: [user_id], references: [id])
+
+  @@unique([class_id, user_id])
+}

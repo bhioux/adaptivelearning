@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="description" content="Parent sneak peek: time-boxed view-only classroom streaming and progress reports."/>
+  <title>Parent Sneaks — Adaptive Learning Platform</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"/>
+  <link rel="stylesheet" href="design-tokens.css"/>
+  <link rel="stylesheet" href="styles.css"/>
+  <script src="shell.js"></script>
+  <style>
+    .sneak-card { max-width: 860px; margin: 0 auto; }
+    .countdown { display: inline-flex; align-items: baseline; gap: var(--space-2); font-family: var(--font-display); }
+    .countdown .num { font-size: var(--text-display-xl); font-weight: var(--weight-bold); color: var(--color-action); }
+    .countdown .unit { font-size: var(--text-heading-md); color: var(--color-text-dim); }
+    .live-tile { aspect-ratio: 16 / 9; width: 100%; background: linear-gradient(135deg, var(--color-surface-3), var(--color-primary-light)); display: flex; align-items: flex-start; justify-content: space-between; padding: var(--space-5); }
+    .live-tile .live-indicator { display: flex; gap: var(--space-2); align-items: center; color: #fff; }
+    .live-tile .live-indicator .dot { width: 10px; height: 10px; border-radius: 50%; background: #fff; animation: pulse 1s ease-in-out infinite; }
+    .live-tile .caption { color: rgba(255,255,255,0.85); font-size: var(--text-sm); font-weight: var(--weight-medium); background: rgba(0,0,0,0.4); padding: 4px 10px; border-radius: var(--radius-pill); }
+    .live-tile .caption b { color: #fff; }
+    @keyframes pulse { 0%, 100% { opacity: 0.4; transform: scale(1); } 50% { opacity: 1; transform: scale(1.3); } }
+    .reports-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-5); margin-top: var(--space-5); }
+    .report-card { display: flex; flex-direction: column; gap: var(--space-3); }
+    .report-card .stat { font-size: var(--text-display-lg); font-weight: var(--weight-bold); color: var(--color-text); }
+    .sneak-card .progress-chip { display: inline-flex; gap: var(--space-2); align-items: center; margin-top: var(--space-3); }
+    .teacher-feedback { margin-top: var(--space-4); padding: var(--space-4); border: 1px solid var(--color-border-subtle); border-radius: var(--radius-lg); background: var(--color-surface); }
+    @media (max-width: 767px) { .reports-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body data-role="parent" data-active="sneek-peek">
+
+  <main class="container">
+    <!-- Sneek peek card -->
+    <section class="pad-top-8 pad-x-6">
+      <h1 class="heading-lg">Sneak peek — live class viewing</h1>
+      <div class="sneak-card">
+        <div class="card" style="padding: var(--space-5);">
+          <div class="row wrap justify-between">
+            <div>
+              <div class="muted text-xs">Live session</div>
+              <h2 class="heading-md">Calculus I · Limits and Continuity</h2>
+              <div class="muted text-sm mt-1">Class: Calculus I · Arms: Evenings</div>
+            </div>
+            <div class="row">
+              <span class="badge">View-only stream</span>
+              <span class="status-pill status-pill--danger">Live</span>
+            </div>
+          </div>
+          <div class="countdown">
+            <span class="num">00</span><span class="unit">:</span>
+            <span class="num">58</span><span class="unit">sec</span>
+            <span class="badge">Time-boxed · 120s max</span>
+          </div>
+          <div class="row wrap mt-3" style="gap: var(--space-3);">
+            <button class="btn btn--primary" id="sneak-open">Open stream (listen-only)</button>
+            <button class="btn btn--ghost" id="sneak-end">End sneak peek now</button>
+          </div>
+        </div>
+
+        <!-- Live tile -->
+        <div class="card live-tile" style="margin-top: var(--space-5);">
+          <span class="caption"><span class="muted" style="font-weight: bold; color: var(--color-text-dim);">LIVE —</span> Prof. Sedgewick on camera, warmth and clarity of the slide story: ...</span>
+          <span class="live-indicator"><span class="dot" aria-hidden="true"></span><span class="muted text-xs">58 s remaining</span></span>
+        </div>
+
+        <!-- Rate limits + consent -->
+        <div class="card" style="margin-top: var(--space-4); padding: var(--space-4) var(--space-5);">
+          <div class="row wrap"><span class="badge">Rate limits enforced</span><span class="badge">Auto-terminates at 120s</span><span class="badge">Audit logged</span></div>
+          <div class="muted text-sm mt-2">This parent card is linked to Maya Chen (Student).</div>
+          <div class="form-field" style="margin-top: var(--space-3);">
+            <span class="toggle is-on"><input type="checkbox" checked aria-label="I accept time-boxed sneak-peek for Maya Chen"/><span class="knob"></span></div>
+            <span class="muted text-sm">I accept time-boxed sneak-peek for Maya Chen</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Weekly progress -->
+    <section class="pad-top-8 pad-x-6" style="max-width: 860px; margin: var(--space-10) auto 0;">
+      <div class="row wrap justify-between">
+        <h2 class="heading-lg">Weekly progress — Maya Chen</h2>
+        <span class="chip chip--selected" id="filter-progress" aria-label="Filter: this week">This week</span>
+      </div>
+      <div class="reports-grid" id="progress-grid">
+        <a class="report-card" href="#" style="border: 1px solid var(--color-border-subtle); border-radius: var(--radius-lg); padding: var(--space-5);">
+          <span class="muted text-xs">Calculus I — Limits &amp; Continuity</span>
+          <span class="stat">18 hrs · Week 2/12</span>
+          <span class="muted text-xs">Avg. accuracy 88% · 8 lessons ahead of schedule</span>
+        </a>
+        <a class="report-card" href="#" style="border: 1px solid var(--color-border-subtle); border-radius: var(--radius-lg); padding: var(--space-5);">
+          <span class="muted text-xs">Modern History — WWII</span>
+          <span class="stat">6 hrs · 100% complete</span>
+          <span class="muted text-xs">Finished — assessment 2/15 due</span>
+        </a>
+        <a class="report-card" href="#" style="border: 1px solid var(--color-border-subtle); border-radius: var(--radius-lg); padding: var(--space-5);">
+          <span class="muted text-xs">Average grade</span>
+          <span class="stat">88%</span>
+          <span class="muted text-xs">Up from 74% last month</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- Teacher feedback summary -->
+    <section class="pad-top-8 pad-x-6" style="max-width: 860px; margin-top: var(--space-10);">
+      <h3 class="heading-md">Teacher feedback — Maya Chen</h3>
+      <div class="teacher-feedback">
+        <p class="muted text-sm">"A growing analyst: limits proofs are getting stronger. Please consider more practice on formal argument structure, as complexity increases for you."</p>
+        <div class="row wrap mt-2">
+          <span class="badge">Updated Nov 10</span><span class="badge">Level: Hard</span>
+        </div>
+        <div class="row wrap mt-3">
+          <button class="btn btn--ghost btn--sm">Share with Maya</button><button class="btn btn--ghost btn--sm">Export summary (PDF)</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    document.getElementById("sneak-open").addEventListener("click", () => {
+      window.A.toast("Opening stream (listen-only): Calculus I — Limits and Continuity · 58s remaining", "info");
+    });
+    document.getElementById("sneak-end").addEventListener("click", () => {
+      window.A.toast("Sneak peek ended", "success");
+    });
+    document.getElementById("filter-progress").addEventListener("click", () => window.A.toast("Filtering: this week", "info"));
+    document.querySelectorAll(".report-card a").forEach((a) => {
+      a.addEventListener("click", (e) => { e.preventDefault(); window.A.toast("Progress report downloaded: Maya Chen, week of Nov 10", "success"); });
+    });
+  </script>
+</body>
+</html>

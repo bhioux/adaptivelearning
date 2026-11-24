@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="description" content="Self-paced course player with secure video, quizzes, and assignments."/>
+  <title>Course Player — Adaptive Learning Platform</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"/>
+  <link rel="stylesheet" href="design-tokens.css"/>
+  <link rel="stylesheet" href="styles.css"/>
+  <script src="shell.js"></script>
+  <style>
+    .layout { display: grid; grid-template-columns: 280px minmax(0, 1fr); gap: var(--space-6); align-items: start; }
+    .lesson-module { border: 1px solid var(--color-border-subtle); border-radius: var(--radius-lg); overflow: hidden; background: var(--color-surface); box-shadow: var(--shadow-sm); }
+    .lesson-module-header { display: flex; align-items: center; gap: var(--space-2); padding: var(--space-3); cursor: pointer; user-select: none; background: var(--color-surface-2); }
+    .lesson-module-header .chevron { display: inline-flex; transition: transform var(--t-fast); }
+    .lesson-module.is-open .chevron { transform: rotate(90deg); }
+    .lesson-list { display: none; border-top: 1px solid var(--color-border-subtle); }
+    .lesson-module.is-open .lesson-list { display: block; }
+    .lesson-item { display: flex; align-items: center; gap: var(--space-2); padding: var(--space-2) var(--space-3); border-left: 2px solid transparent; font-size: var(--text-body-sm); }
+    .lesson-item .lesson-check { display: inline-flex; width: 18px; height: 18px; flex-shrink: 0; color: var(--color-success); }
+    .lesson-item .lesson-check .icon { width: 14px; height: 14px; }
+    .lesson-item.is-active { background: var(--color-surface-2); border-left-color: var(--color-primary); font-weight: var(--weight-semibold); color: var(--color-text); }
+    .lesson-item.is-done .lesson-title { color: var(--color-text-dim); text-decoration: line-through; }
+    .lesson-item:hover { background: var(--color-surface-2); }
+    .scrubber { display: flex; gap: var(--space-3); align-items: center; font-size: var(--text-caption); color: var(--color-text-muted); font-variant-numeric: tabular-nums; }
+    .scrubber .scrubber-track { flex: 1; min-width: 120px; height: 6px; border-radius: var(--radius-pill); background: var(--color-surface-3); overflow: hidden; cursor: pointer; }
+    .scrubber .scrubber-fill { height: 100%; background: var(--color-primary); }
+    .player-wrap { position: relative; }
+    .player-summary { margin-top: var(--space-5); display: flex; gap: var(--space-3); flex-wrap: wrap; }
+    .lesson-chips { margin: var(--space-3) 0; }
+    .transcript-snippet { padding: var(--space-4); border: 1px solid var(--color-border-subtle); border-radius: var(--radius-lg); background: var(--color-surface-2); }
+    .quiz-panel, .assignments-panel, .resources-panel { margin-top: var(--space-6); }
+    .assignments-item { display: flex; gap: var(--space-3); align-items: center; padding: var(--space-4); border: 1px solid var(--color-border-subtle); border-radius: var(--radius-lg); background: var(--color-surface); }
+    @media (max-width: 1023px) {
+      .layout { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+      .layout.sidebar-open .sidebar { display: block; position: fixed; inset: 0 0 auto 0; max-height: 50vh; z-index: 10; }
+    }
+  </style>
+</head>
+<body data-role="student" data-active="courses">
+
+  <main class="container">
+    <!-- Course header -->
+    <section class="pad-top-8 pad-x-6">
+      <a href="student-dashboard.html" class="btn btn--ghost">← Dashboard</a>
+      <div class="card" style="margin-top: var(--space-5);">
+        <div class="course-thumb" style="background: linear-gradient(135deg, var(--color-primary-light), var(--color-secondary-light)); aspect-ratio: 16/9; height: 260px;">
+          <div class="row wrap" style="padding: var(--space-4); justify-content: flex-end;">
+            <span class="badge">Mathematics</span>
+            <span class="badge">Video</span>
+            <span class="badge">⭐ 4.8 · 12 lessons</span>
+          </div>
+        </div>
+        <div class="course-body" style="padding: var(--space-6);">
+          <h1 class="heading-lg">Calculus I: Limits and Continuity</h1>
+          <div class="muted text-sm mt-2">Prof. Sedgewick · Self-paced · Intermediate</div>
+          <p class="muted text-sm mt-4 maxw-800">An intuitive but rigorous foundation for differential calculus: neighborhoods, limits, the ε–δ definition, continuity, and the squeeze theorem. You'll solve problems, check your work, and get personalized hints that adapt to how you think.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main layout: sidebar + player -->
+    <section class="layout pad-top-8 pad-x-6" style="margin-top: var(--space-5);">
+      <aside class="sidebar">
+        <div class="lesson-module" style="border: none;">
+          <div class="lesson-module-header">
+            <span class="chevron"></span>
+            <span class="bold" style="font-size: var(--text-heading-md);">Chapter 1 · Foundations</span>
+          </div>
+          <div class="lesson-list">
+            <div class="lesson-item is-done" data-lesson="1" aria-label="Lesson 1 — Intro to Epsilon-Delta (done)">
+              <span class="lesson-check"></span><span class="lesson-title">1.1 Intro to Epsilon-Delta</span>
+            </div>
+            <div class="lesson-item is-active" data-lesson="2" aria-current="true" aria-label="Lesson 2 — Definition of Limit (current)">
+              <span class="lesson-check"></span><span class="lesson-title">2.1 Definition of Limit</span>
+            </div>
+            <div class="lesson-item" data-lesson="3" aria-label="Lesson 3 — Epsilon-Delta Definition of Limits">
+              <span class="lesson-check"></span><span class="lesson-title">3.1 Epsilon-Delta Definition of Limits</span>
+            </div>
+            <div class="lesson-item" data-lesson="4" aria-label="Lesson 4 — Limits of Functions (available)">
+              <span class="lesson-check"></span><span class="lesson-title">4.1 Limits of Functions</span>
+            </div>
+          </div>
+        </div>
+        <div class="lesson-module mt-4" style="border: none;">
+          <div class="lesson-module-header">
+            <span class="chevron"></span>
+            <span class="bold" style="font-size: var(--text-heading-md);">Chapter 2 · Continuity</span>
+          </div>
+          <div class="lesson-list">
+            <div class="lesson-item" data-lesson="5" aria-label="Lesson 5 — Continuity at a Point (available)">
+              <span class="lesson-check"></span><span class="lesson-title">5.1 Continuity at a Point</span>
+            </div>
+            <div class="lesson-item" data-lesson="6" aria-label="Lesson 6 — Intermediate Value Theorem (available)">
+              <span class="lesson-check"></span><span class="lesson-title">6.1 Intermediate Value Theorem</span>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <main class="minw-0">
+        <!-- Video player -->
+        <div class="player-wrap">
+          <div class="player-area" role="button" tabindex="0" aria-label="Play video — Lesson 3 — Epsilon-Delta Definition of Limits">
+            <div class="player-inner">
+              <span class="play-btn"></span>
+              <span class="player-title">Lesson 3 — Epsilon-Delta Definition of Limits</span>
+            </div>
+          </div>
+          <div class="player-info" style="position: absolute; right: var(--space-4); bottom: var(--space-4); display: flex; gap: var(--space-3); color: #fff; font-size: var(--text-caption); align-items: center;">
+            <span class="row"><span id="player-time">00:42</span><span class="muted">/</span><span>03:51</span></span>
+            <span class="row"><span class="player-btn" data-action="cc">CC</span></span>
+            <span class="row"><span class="player-btn" data-action="speed">1.0×</span></span>
+            <button class="transport-btn is-primary" id="player-play" aria-label="Play"><span class="icon"></span></button>
+          </div>
+        </div>
+
+        <!-- Lesson summary chips -->
+        <div class="player-summary">
+          <span class="chip chip--alternate">Chapter 2 · Limits</span>
+          <span class="chip chip--alternate">20 min read</span>
+          <span class="chip chip--alternate">Project-based assessment</span>
+        </div>
+
+        <!-- Transcript snippet -->
+        <div class="transcript-snippet" role="region" aria-label="Lesson transcript (excerpt)">
+          <div class="muted text-sm" style="margin-bottom: var(--space-2);">Transcript excerpt</div>
+          <p class="text-sm" style="line-height: 1.5;">
+            "We define the limit of 𝑓(x) as x approaches a to be L if for every ε > 0 there exists a δ > 0 such that whenever 0 < |x − a| < δ we have |𝑓(x) − L| < ε. …"
+          </p>
+        </div>
+
+        <!-- Lesson tools -->
+        <div class="row wrap" style="margin-top: var(--space-4);">
+          <button class="btn" id="mark-complete">Mark as complete</button>
+          <button class="btn btn--ghost" id="save-notes">Save notes</button>
+          <button class="btn btn--ghost">Copy timestamped link</button>
+          <span class="spacer"></span>
+          <button class="btn btn--ghost" id="prev-lesson">Previous lesson</button>
+          <button class="btn btn--ghost" id="next-lesson">Next lesson</button>
+        </div>
+
+        <!-- Quick Quiz -->
+        <div class="quiz-panel">
+          <div class="row wrap justify-between">
+            <div>
+              <div class="muted text-sm">Quick Quiz — 5 questions</div>
+              <div class="row" style="margin-top: var(--space-2);"><span class="badge">Difficulty: Hard</span><span class="badge">Adaptive pacing</span><span class="badge">Recommended: Next lesson longer</span></div>
+            </div>
+            <button class="btn btn--primary" id="quiz-start">Start quiz →</button>
+          </div>
+        </div>
+
+        <!-- Assignments -->
+        <div class="assignments-panel">
+          <h2 class="heading-sm">Assignments</h2>
+          <div class="assignments-item">
+            <div style="flex: 1;">
+              <span class="bold">Lab 4: Epsilon-Delta in practice</span>
+              <div class="muted text-xs mt-2">Due Nov 20 · Estimated 12 minutes · Submit: file upload + notes</div>
+            </div>
+            <button class="btn btn--ghost" id="assignment-start">Start assignment</button>
+          </div>
+        </div>
+
+        <!-- Resources -->
+        <div class="resources-panel">
+          <h2 class="heading-sm">Resources</h2>
+          <div class="row wrap mt-2">
+            <a class="btn btn--ghost" href="#" id="resource-pdf" aria-label="Download PDF">Download PDF</a>
+            <a class="btn btn--ghost" href="#" aria-label="Open notebook">Open notebook</a>
+            <a class="btn btn--ghost" href="#" aria-label="Related reading">Related reading</a>
+          </div>
+        </div>
+      </main>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      const A = window.A;
+      // Inject icons into lesson checks and module chevrons
+      document.querySelectorAll(".lesson-check").forEach((el) => {
+        const svg = document.createElement("span");
+        svg.innerHTML = A.icons.check;
+        el.appendChild(svg);
+      });
+      document.querySelectorAll(".lesson-module-header .chevron").forEach((el) => {
+        const svg = document.createElement("span");
+        svg.innerHTML = A.icons.chevronsRight;
+        el.appendChild(svg);
+      });
+
+      const openModule = (el) => el.closest(".lesson-module").classList.toggle("is-open");
+      document.querySelectorAll(".lesson-module-header").forEach((el) =>
+        el.addEventListener("click", () => openModule(el))
+      );
+
+      const toast = (m) => A.toast(m, "info");
+      document.getElementById("mark-complete").addEventListener("click", () => toast("Lesson 3 marked as complete ✓"));
+      document.getElementById("save-notes").addEventListener("click", () => toast("Notes saved"));
+      document.getElementById("prev-lesson").addEventListener("click", () => toast("Playing: Lesson 2 — Definition of Limit"));
+      document.getElementById("next-lesson").addEventListener("click", () => toast("Playing: Lesson 4 — Limits of Functions"));
+      document.getElementById("quiz-start").addEventListener("click", () => toast("Adaptive quiz started: Difficulty — Hard (based on your performance)"));
+      document.getElementById("assignment-start").addEventListener("click", () => toast("Lab 4 assignment opened"));
+      document.getElementById("player-play").addEventListener("click", () => toast("Playing video: Epsilon-Delta Definition of Limits"));
+      document.querySelector('[data-action="cc"]').addEventListener("click", () => toast("Closed captions on"));
+      document.querySelector('[data-action="speed"]').addEventListener("click", () => toast("Speed ×1.25"));
+      document.getElementById("resource-pdf").addEventListener("click", (e) => { e.preventDefault(); toast("PDF download started"); });
+      document.querySelector('.lesson-item[data-lesson="2"]').addEventListener("click", () => toast("Playing: Lesson 2 — Definition of Limit"));
+      document.querySelector('.lesson-item[data-lesson="3"]').addEventListener("click", () => toast("Playing: Lesson 3 — Epsilon-Delta Definition of Limits"));
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="description" content="Mobile live classroom — tiles, chat drawer, attendance, and transport."/>
+  <title>Live Classroom — Mobile</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"/>
+  <link rel="stylesheet" href="../design-tokens.css"/>
+  <link rel="stylesheet" href="../styles.css"/>
+  <link rel="stylesheet" href="styles.css"/>
+  <script src="../shell.js"></script>
+  <style>
+    .phone-body { padding: var(--space-4); }
+    .room-m { display: grid; gap: var(--space-3); }
+    .tile-m { aspect-ratio: 16/9; border-radius: var(--radius-lg); background: linear-gradient(135deg, #b34b9f, #7c3aed); display: flex; align-items: flex-start; justify-content: flex-end; padding: var(--space-4); position: relative; }
+    .tile-m .avatar { position: absolute; left: var(--space-3); bottom: var(--space-3); }
+    .tile-m .dot { position: absolute; top: var(--space-2); right: var(--space-2); width: 8px; height: 8px; border-radius: 50%; background: #fff; animation: pulse-m 1.2s infinite; }
+    @keyframes pulse-m { 0%,100% { opacity: 0.5; } 50% { opacity: 1; } }
+    .attendance-m { display: flex; gap: var(--space-2); overflow-x: auto; padding: var(--space-3) 0; }
+    .attendance-m .chip { white-space: nowrap; flex-shrink: 0; display: flex; gap: var(--space-2); align-items: center; }
+    .chat-btn { position: fixed; right: var(--space-4); bottom: calc(0.25rem + env(safe-area-inset-bottom)); z-index: 30; display: inline-flex; width: 46px; height: 46px; border-radius: 50%; background: var(--color-surface); border: 1px solid var(--color-border); box-shadow: var(--shadow-md); color: var(--color-text); }
+    .chat-drawer { position: fixed; inset: 0; z-index: 40; display: none; align-items: center; justify-content: center; }
+    .chat-drawer.is-open { display: block; }
+    .chat-drawer .overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.5); }
+    .chat-sheet { position: relative; background: var(--color-surface); border-radius: var(--radius-xl); height: 360px; width: 92%; overflow: hidden; box-shadow: var(--shadow-lg); z-index: 10; }
+    .chat-sheet .m-head { padding: var(--space-4); border-bottom: 1px solid var(--color-border-subtle); display: flex; justify-content: space-between; font-weight: var(--weight-semibold); }
+    .chat-sheet .m-msgs { height: calc(100% - 52px - 60px); overflow-y: auto; padding: var(--space-4); display: flex; flex-direction: column; gap: var(--space-3); }
+    .chat-sheet .m-composer { position: absolute; bottom: 0; left: 0; right: 0; display: flex; gap: var(--space-2); padding: var(--space-3); border-top: 1px solid var(--color-border-subtle); background: var(--color-surface); }
+    .live-tiles-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }
+    .live-tiles-row .tile-main { aspect-ratio: 1/1; border-radius: var(--radius-lg); background: linear-gradient(135deg, var(--color-primary-light), var(--color-secondary-light)); display: flex; align-items: flex-start; justify-content: flex-end; padding: var(--space-4); }
+  </style>
+</head>
+<body>
+  <div class="phone-frame">
+    <div class="status-bar">10:02 AM</div>
+    <main class="phone-body">
+      <div class="app-nav">
+        <button class="back-btn" aria-label="Back"><span class="icon icon-sm"></span></button>
+        <span class="app-nav-title">Live: Calculus I</span>
+        <span class="app-nav-right"><span class="row"><span class="live-dot" style="width: 8px; height: 8px; border-radius: 50%; background: #dc3545; display: inline-block;"></span><span class="muted text-xs">00:47</span></span></span>
+      </div>
+
+      <div class="room-m">
+        <div class="live-tiles-row">
+          <div class="tile-main"><span class="avatar avatar--sm">Prof</span></div>
+          <div class="tile-m"><span class="avatar avatar--sm">SA</span><span class="dot" aria-hidden="true"></span></div>
+        </div>
+        <div class="row wrap">
+          <span class="chip chip--alternate">Screen share</span>
+          <span class="chip chip--selected">Camera on</span>
+        </div>
+        <div class="attendance-m">
+          <span class="chip chip--alternate">Prof</span>
+          <span class="chip chip--alternate">Samira</span>
+          <span class="chip chip--alternate">Roberto</span>
+          <span class="chip chip--alternate">Anonymous</span>
+        </div>
+        <div class="muted text-xs">Muted — everyone hears individually</div>
+      </div>
+
+      <button class="chat-btn" id="chat-open" aria-label="Open chat"><span class="icon"></span></button>
+    </main>
+    <div class="home-indicator"></div>
+  </div>
+
+  <div class="chat-drawer" id="chat-drawer">
+    <div class="overlay" id="chat-overlay" aria-hidden="true"></div>
+    <div class="chat-sheet">
+      <div class="m-head">Live chat <span class="status-pill--success">Muted</span></div>
+      <div class="m-msgs">
+        <div class="muted text-xs">9:57 — Prof</div><div class="muted text-xs">9:58 — Samira (camera off)</div>
+        <div class="muted text-xs">9:58 — Robert (yes!)</div><div class="muted text-xs">9:59 — Anonymous</div>
+        <div class="muted text-xs">10:00 — Prof (check the transcript)</div>
+      </div>
+      <div class="m-composer"><input class="input" placeholder="Type a message…" aria-label="Message"/><button class="btn btn--primary btn--sm" id="chat-send">Send</button></div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const A = window.A;
+      document.querySelectorAll(".back-btn .icon").forEach((s) => { s.innerHTML = A.icons.arrowLeft; });
+      document.querySelector(".chat-btn .icon").innerHTML = A.icons.chat;
+      const drawer = document.getElementById("chat-drawer");
+      const open = () => { drawer.classList.add("is-open"); drawer.setAttribute("aria-hidden", "false"); };
+      const close = () => { drawer.classList.remove("is-open"); drawer.setAttribute("aria-hidden", "true"); };
+      document.getElementById("chat-open").addEventListener("click", open);
+      document.getElementById("chat-overlay").addEventListener("click", close);
+      document.getElementById("chat-send").addEventListener("click", () => A.toast("Message sent", "success"));
+      window.toggleChat = function () { if (drawer.classList.contains("is-open")) close(); else open(); };
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="description" content="Admin console: user management, roles, audit logs, guardrails, billing."/>
+  <title>Admin Console — Adaptive Learning Platform</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"/>
+  <link rel="stylesheet" href="design-tokens.css"/>
+  <link rel="stylesheet" href="styles.css"/>
+  <script src="shell.js"></script>
+  <style>
+    .console-tabs { display: flex; gap: var(--space-2); border-bottom: 1px solid var(--color-border-subtle); margin-bottom: var(--space-6); flex-wrap: wrap; }
+    .console-tabs .tab-link { padding: var(--space-2) var(--space-3); font-weight: var(--weight-semibold); border-bottom: 2px solid transparent; margin-bottom: -1px; }
+    .console-tabs .tab-link.is-active { border-bottom-color: var(--color-action); color: var(--color-text); }
+    .console-section { display: none; }
+    .console-section.is-active { display: block; }
+    .guardrail-panel { padding: var(--space-4) var(--space-5); border: 1px solid var(--color-border-subtle); border-radius: var(--radius-lg); background: var(--color-surface); box-shadow: var(--shadow-sm); margin-bottom: var(--space-4); }
+    .guardrail-panel .panel-title { display: flex; align-items: center; justify-content: space-between; }
+    .guardrail-rule { display: flex; justify-content: space-between; align-items: center; padding: var(--space-3) 0; border-bottom: 1px solid var(--color-border-subtle); }
+    .guardrail-rule:last-child { border-bottom: none; }
+    .overview-stats { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: var(--space-5); }
+    .overview-stat .label { color: var(--color-text-muted); font-size: var(--text-body-xs); text-transform: uppercase; letter-spacing: 0.04em; }
+    .overview-stat .value { font-size: var(--text-display-md); font-weight: var(--weight-bold); margin-top: var(--space-1); }
+    @media (max-width: 1023px) { .overview-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+    @media (max-width: 639px) { .overview-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  </style>
+</head>
+<body data-role="admin" data-active="console">
+
+  <main class="container">
+    <!-- Console header + overview -->
+    <section class="pad-top-8 pad-x-6">
+      <div class="row wrap justify-between">
+        <h1 class="heading-lg">Admin Console</h1>
+        <span class="muted text-sm">System health: <span style="color: var(--color-success-dark);">✓ All services nominal</span></span>
+        <button class="btn btn--primary btn--sm" id="btn-import">Import users</button>
+      </div>
+      <div class="overview-stats mt-4" role="status">
+        <div class="overview-stat"><span class="value">354</span><span class="label">Total users</span></div>
+        <div class="overview-stat"><span class="value">276</span><span class="label">Active users</span></div>
+        <div class="overview-stat"><span class="value">42</span><span class="label">Classes</span></div>
+        <div class="overview-stat"><span class="value">86</span><span class="label">Courses</span></div>
+        <div class="overview-stat"><span class="value">$12.5k</span><span class="label">Pending payouts</span></div>
+        <div class="overview-stat"><span class="value">3</span><span class="label">Violations (review)</span></div>
+      </div>
+
+      <!-- Console tabs -->
+      <div class="console-tabs mt-6" role="tablist" aria-label="Console sections">
+        <button class="tab-link is-active" role="tab" data-tab="users">Users</button>
+        <button class="tab-link" role="tab" data-tab="roles">Roles</button>
+        <button class="tab-link" role="tab" data-tab="audit">Audit Logs</button>
+        <button class="tab-link" role="tab" data-tab="guardrails">Guardrails</button>
+        <button class="tab-link" role="tab" data-tab="billing">Billing &amp; Payouts</button>
+        <button class="tab-link" role="tab" data-tab="settings">Settings</button>
+      </div>
+    </section>
+
+    <!-- ---- Users ---- -->
+    <section class="console-section is-active" data-console="users">
+      <div class="pad-x-6">
+        <div class="card" style="padding: var(--space-4);">
+          <div class="row wrap justify-between">
+            <input class="input" style="max-width: 320px;" placeholder="Search users — name, email, role…" aria-label="Search users"/>
+            <div class="row"><select class="select" style="max-width: 180px;" aria-label="Filter by role"><option value="">All roles</option><option value="student">Student</option><option value="tutor">Tutor</option><option value="parent">Parent</option><option value="admin">Admin</option></select></div>
+          </div>
+          <div class="table-wrap" style="margin-top: var(--space-3);">
+            <table class="table">
+              <thead>
+                <tr><th>User</th><th>Role</th><th>Joined</th><th>Status</th><th>2FA</th><th style="text-align: right;">Actions</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><div class="row"><span class="avatar avatar--sm">MS</span><span class="text-sm">Maya Chen</span></div></td>
+                  <td><span class="role-badge role-badge--tutor">Tutor</span></td>
+                  <td class="mono text-xs">Apr 01, 2026</td>
+                  <td><span class="status-pill--success">Verified</span></td>
+                  <td><span class="status-pill--success">Enabled</span></td>
+                  <td class="row-actions">
+                    <button class="btn btn--ghost btn--sm" style="color: var(--color-text-dim);" aria-label="Edit Maya Chen">Edit</button>
+                    <button class="btn btn--ghost btn--sm" style="color: var(--color-action);" aria-label="Revoke 2FA for Maya Chen">Revoke 2FA</button>
+                    <button class="btn btn--ghost btn--sm" style="color: var(--color-danger);" aria-label="Archive Maya Chen">Archive</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td><div class="row"><span class="avatar avatar--sm">SP</span><span class="text-sm">Samira Patel</span></div></td>
+                  <td><span class="role-badge role-badge--student">Student</span></td>
+                  <td class="mono text-xs">Sep 14, 2026</td>
+                  <td><span class="status-pill--success">Verified</span></td>
+                  <td><span class="status-pill--neutral">Disabled</span></td>
+                  <td class="row-actions">
+                    <button class="btn btn--ghost btn--sm" style="color: var(--color-action);" aria-label="Enable 2FA for Samira Patel">Enable 2FA</button>
+                    <button class="btn btn--ghost btn--sm" style="color: var(--color-danger);" aria-label="Archive Samira Patel">Archive</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td><div class="row"><span class="avatar avatar--sm">RS</span><span class="text-sm">Roberto Sura</span></div></td>
+                  <td><span class="role-badge role-badge--parent">Parent</span></td>
+                  <td class="mono text-xs">Jan 03, 2026</td>
+                  <td><span class="status-pill--success">Verified</span></td>
+                  <td><span class="status-pill--success">Enabled</span></td>
+                  <td class="row-actions">
+                    <button class="btn btn--ghost btn--sm" style="color: var(--color-text-dim);" aria-label="Edit Roberto Sura">Edit</button>
+                    <button class="btn btn--ghost btn--sm" style="color: var(--color-danger);" aria-label="Archive Roberto Sura">Archive</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td><div class="row"><span class="avatar avatar--sm">AL</span><span class="text-sm">Ada Lovelace</span></div></td>
+                  <td><span class="role-badge role-badge--admin">Admin</span></td>
+                  <td class="mono text-xs">Mar 19, 2026</td>
+                  <td><span class="status-pill--success">Verified</span></td>
+                  <td><span class="status-pill--neutral">Disabled</span></td>
+                  <td class="row-actions">
+                    <button class="btn btn--ghost btn--sm" style="color: var(--color-danger);" aria-label="Archive Ada Lovelace">Archive</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---- Roles ---- -->
+    <section class="console-section" data-console="roles">
+      <div class="pad-x-6">
+        <div class="row wrap justify-between">
+          <h2 class="heading-lg">Roles</h2>
+          <button class="btn btn--ghost btn--sm">+ Create role</button>
+        </div>
+        <div class="card" style="margin-top: var(--space-4);">
+          <div class="table-wrap">
+            <table class="table">
+              <thead>
+                <tr><th>Role</th><th>Auto-enroll</th><th>Permissions</th><th>Guardrails</th><th>Default daily time limit</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span class="role-badge role-badge--student">Student</span></td>
+                  <td><span class="chip chip--selected">on</span></td>
+                  <td><span class="badge">View courses</span><span class="badge">Take quizzes</span></td>
+                  <td><span class="badge">Content filters</span><span class="badge">Time caps</span></td>
+                  <td class="mono">4 hrs</td>
+                </tr>
+                <tr>
+                  <td><span class="role-badge role-badge--tutor">Tutor</span></td>
+                  <td><span class="chip chip--alternate">off</span></td>
+                  <td><span class="badge">Grading</span><span class="badge">Class arms</span><span class="badge">Drafting</span></td>
+                  <td><span class="badge">Interaction bounds</span><span class="badge">Audit trail</span></td>
+                  <td class="mono">—</td>
+                </tr>
+                <tr>
+                  <td><span class="role-badge role-badge--parent">Parent</span></td>
+                  <td><span class="chip chip--alternate">off</span></td>
+                  <td><span class="badge">View progress</span><span class="badge">Sneak-peek</span><span class="badge">Reports</span></td>
+                  <td><span class="badge">120s time-box</span><span class="badge">Privacy consent</span></td>
+                  <td class="mono">—</td>
+                </tr>
+                <tr>
+                  <td><span class="role-badge role-badge--admin">Admin</span></td>
+                  <td><span class="chip chip--alternate">off</span></td>
+                  <td><span class="badge">User CRUD</span><span class="badge">Roles</span><span class="badge">Audit</span><span class="badge">Billing</span></td>
+                  <td><span class="badge">All guardrails</span><span class="badge">Oversight</span></td>
+                  <td class="mono">—</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---- Audit Logs ---- -->
+    <section class="console-section" data-console="audit">
+      <div class="pad-x-6">
+        <div class="row wrap justify-between">
+          <h2 class="heading-lg">Audit Logs</h2>
+          <div class="row"><select class="select" style="max-width: 200px;" aria-label="Filter action"><option>All actions</option><option>Login events</option><option>Role changes</option><option>Guardrail edits</option><option>Payout changes</option><option>User archives</option></select></div>
+        </div>
+        <div class="card" style="margin-top: var(--space-4);">
+          <div class="table-wrap">
+            <table class="table">
+              <thead>
+                <tr><th>Timestamp</th><th>Actor</th><th>Action</th><th>Target</th><th>Result</th></tr>
+              </thead>
+              <tbody>
+                <tr><td class="mono text-xs">Nov 19, 14:03</td><td>Maya Chen</td><td>Saved rubric feedback (Maya)</td><td>Grading queue — submission #3</td><td><span class="status-pill--success">Success</span></td></tr>
+                <tr><td class="mono text-xs">Nov 19, 12:55</td><td>Ada Lovelace</td><td>Edited guardrail "student safety" (adds policy PG-18)</td><td>Guardrails (tier policy)</td><td><span class="status-pill--success">Success</span></td></tr>
+                <tr><td class="mono text-xs">Nov 19, 11:02</td><td>Anonymous (teacher-bot)</td><td>Granted 2FA to Maya Chen</td><td>User: Maya Chen</td><td><span class="status-pill--success">Success</span></td></tr>
+                <tr><td class="mono text-xs">Nov 18, 23:41</td><td>Roberto Sura</td><td>Ended sneak peek (view-only)</td><td>Parent card: Roberto</td><td><span class="status-pill--success">Success</span></td></tr>
+                <tr><td class="mono text-xs">Nov 18, 09:30</td><td>Admin</td><td>Suspended account (tampering suspected)</td><td>Samira Patel</td><td><span class="status-pill--warning">Pending review</span></td></tr>
+                <tr><td class="mono text-xs">Nov 18, 08:15</td><td>Maya Chen</td><td>Class arms updated (arm 2 added)</td><td>Class: Calculus I</td><td><span class="status-pill--success">Success</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---- Guardrails ---- -->
+    <section class="console-section" data-console="guardrails">
+      <div class="pad-x-6">
+        <div class="row wrap justify-between">
+          <h2 class="heading-lg">Guardrail policy editor</h2>
+          <span class="status-pill status-pill--success">Published v2 — 12 policies active</span>
+        </div>
+        <div class="col" style="margin-top: var(--space-4); max-width: 960px;">
+          <div class="guardrail-panel">
+            <div class="panel-title"><span class="bold">Content safety filters</span><span class="chip chip--selected" aria-label="Current: PG-18 tier">PG-18</span></div>
+            <div class="guardrail-rule">
+              <div><div class="bold text-sm">Blocking policy v2 — Profanity & hate speech</div><span class="muted text-xs">Last updated Nov 19 · Version: 2.4</span></div>
+              <span class="status-pill status-pill--success">Enforced</span>
+            </div>
+            <div class="guardrail-rule">
+              <div><div class="bold text-sm">Age-appropriate content enforcement</div><span class="muted text-xs">Flags media under 12 as 0+. PG for 13–17.</span></div>
+              <span class="toggle is-on"><input type="checkbox" checked aria-label="Age-appropriate enforcement on"/><span class="knob"></span></span>
+            </div>
+            <div class="guardrail-rule">
+              <div><div class="bold text-sm">Transparency disclosure</div><span class="muted text-xs">Markdowns/announcements on AI-generated content.</span></div>
+              <span class="status-pill--success">On</span>
+            </div>
+          </div>
+
+          <div class="guardrail-panel">
+            <div class="panel-title"><span class="bold">Student interaction boundaries</span><span class="chip chip--selected">Strict</span></div>
+            <div class="guardrail-rule">
+              <div><div class="bold text-sm">No direct messaging</div><span class="muted text-xs">Social features are read-only on the side feed.</span></div>
+              <span class="status-pill--success">On</span>
+            </div>
+            <div class="guardrail-rule">
+              <div><div class="bold text-sm">Attachment allow-list: text, PDF, PNG, JPEG, MP4</div><span class="muted text-xs">Executables and archives blocked.</span></div>
+              <span class="status-pill--success">On</span>
+            </div>
+          </div>
+
+          <div class="guardrail-panel">
+            <div class="panel-title"><span class="bold">Privacy & compliance (FERPA/COPPA/GDPR)</span></div>
+            <div class="guardrail-rule">
+              <div><div class="bold text-sm">Data deletion window</div><span class="muted text-xs">Anonymized 30 days after account closure.</span></div>
+              <select class="select" style="max-width: 160px;" aria-label="Deletion window"><option>30 days</option><option>90 days</option><option>Never</option></select>
+            </div>
+            <div class="guardrail-rule">
+              <div><div class="bold text-sm">Attack surface — anonymized telemetry</div><span class="muted text-xs">No personal identifiers in analytics events.</span></div>
+              <span class="toggle is-on"><input type="checkbox" checked aria-label="Anonymized telemetry"/><span class="knob"></span></span>
+            </div>
+            <div class="row wrap mt-2">
+              <button class="btn btn--primary" id="publish-v3">Publish policy v3</button>
+              <button class="btn btn--ghost">Export policy (PDF)</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---- Billing & Payouts ---- -->
+    <section class="console-section" data-console="billing">
+      <div class="pad-x-6">
+        <h2 class="heading-lg">Billing &amp; payouts</h2>
+        <div class="row wrap mt-2">
+          <span class="badge">Next cycle: Nov 26</span>
+          <span class="badge">Gateway: Stripe</span>
+        </div>
+        <div class="card" style="margin-top: var(--space-4);">
+          <div class="table-wrap">
+            <table class="table">
+              <thead>
+                <tr><th>Invoice</th><th>Tutor</th><th>Hours</th><th>Amount</th><th>Issued</th><th style="text-align: right;">Status</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>INV-08231</td><td>Maya Chen</td><td>14.5</td><td>$273.20</td><td class="mono text-xs">Nov 05</td><td style="text-align: right;"><span class="status-pill--success">Paid</span></td></tr>
+                <tr><td>INV-08194</td><td>Roberto Sura</td><td>20.0</td><td>$374.00</td><td class="mono text-xs">Oct 29</td><td style="text-align: right;"><span class="status-pill--neutral">Pending</span></td></tr>
+                <tr><td>INV-08198</td><td>Ada Lovelace</td><td>8.0</td><td>$152.00</td><td class="mono text-xs">Oct 29</td><td style="text-align: right;"><span class="status-pill--neutral">Pending</span></td></tr>
+                <tr><td>INV-08199</td><td>Samira Patel</td><td>12.5</td><td>$156.25</td><td class="mono text-xs">Oct 28</td><td style="text-align: right;"><span class="status-pill--warning">Disputed</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="row wrap mt-4" style="gap: var(--space-3);">
+          <button class="btn btn--primary btn--sm" id="btn-generate-summary">Generate weekly summary</button>
+          <button class="btn btn--ghost btn--sm" id="btn-download">Download reports (CSV)</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---- Settings ---- -->
+    <section class="console-section" data-console="settings">
+      <div class="pad-x-6">
+        <h2 class="heading-lg">Settings</h2>
+        <div class="col" style="margin-top: var(--space-4); max-width: 760px;">
+          <div class="card" style="padding: var(--space-4);">
+            <div class="row wrap justify-between"><span class="bold">Registration</span><span class="toggle is-on"><input type="checkbox" checked aria-label="Registration open"/><span class="knob"></span></span></div>
+            <div class="muted text-xs mt-2">Open to new student and tutor sign-ups.</div>
+          </div>
+          <div class="card" style="padding: var(--space-4); margin-top: var(--space-4);">
+            <div class="row wrap justify-between"><span class="bold">TOTP 2FA enforcement</span><span class="toggle is-on"><input type="checkbox" checked aria-label="2FA enforcement on"/><span class="knob"></span></span></div>
+            <div class="muted text-xs mt-2">Require 2FA for all logins within 24h of account creation.</div>
+          </div>
+          <div class="card" style="padding: var(--space-4); margin-top: var(--space-4);">
+            <div class="row wrap justify-between"><span class="bold">Data export (GDPR/FERPA)</span><span class="toggle is-on"><input type="checkbox" checked aria-label="Data export on"/><span class="knob"></span></span></div>
+            <div class="muted text-xs mt-2">Allow users to download personal data as JSON or CSV.</div>
+          </div>
+          <div class="card" style="padding: var(--space-4); margin-top: var(--space-4);">
+            <div class="row wrap justify-between"><span class="bold">AI feedback summaries (LLM)</span><span class="toggle is-on"><input type="checkbox" checked aria-label="AI feedback summaries on"/><span class="knob"></span></span></div>
+            <div class="muted text-xs mt-2">Automated parent-facing summaries are guardrailed before publication.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      // Console tabs
+      document.querySelectorAll(".console-tabs .tab-link").forEach((t) => {
+        t.addEventListener("click", () => {
+          document.querySelectorAll(".console-tabs .tab-link").forEach((x) => x.classList.remove("is-active"));
+          t.classList.add("is-active");
+          document.querySelectorAll(".console-section").forEach((s) => s.classList.remove("is-active"));
+          document.querySelector('.console-section[data-console="' + t.dataset.tab + '"]').classList.add("is-active");
+        });
+      });
+
+      const handlers = {
+        "publish-v3": "Policy v3 published — 8 user groups updated",
+      };
+      Object.entries(handlers).forEach(([id, msg]) => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener("click", () => window.A.toast(msg, "success"));
+      });
+
+      // admin console bulk action buttons
+      const actions = ["Revoke 2FA", "Reset password", "Archive"];
+      document.querySelectorAll(".row-actions button").forEach((el) => {
+        const label = el.textContent;
+        el.addEventListener("click", () => {
+          const user = el.closest("tr").querySelector(".text-sm").textContent;
+          window.A.toast("Action confirmed: " + label + " — " + user, label === "Archive" ? "warning" : "success");
+        });
+      });
+      document.getElementById("btn-generate-summary").addEventListener("click", () => window.A.toast("Weekly payout summary generated", "success"));
+      document.getElementById("btn-import").addEventListener("click", () => window.A.toast("Import queued — 1,048 users", "info"));
+      document.getElementById("publish-v3").addEventListener("click", () => window.A.toast("Policy v3 published — 8 user groups updated", "success"));
+      document.getElementById("btn-download").addEventListener("click", () => window.A.toast("Downloading reports CSV", "info"));
+    })();
+  </script>
+</body>
+</html>

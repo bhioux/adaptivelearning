@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="description" content="Live virtual classroom: managed WebRTC room with video, chat, whiteboard, and attendance."/>
+  <title>Live Classroom — Adaptive Learning Platform</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"/>
+  <link rel="stylesheet" href="design-tokens.css"/>
+  <link rel="stylesheet" href="styles.css"/>
+  <script src="shell.js"></script>
+  <style>
+    .room { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: var(--space-5); align-items: start; }
+    .attendance-list { display: flex; flex-direction: column; gap: var(--space-2); max-height: 320px; overflow-y: auto; }
+    .attendance-list .row { justify-content: space-between; font-size: var(--text-body-sm); }
+    .attendance-list .attendance-status { font-size: var(--text-caption); color: var(--color-text-dim); }
+    .transport-bar { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-5); }
+    .transport-btn.is-destructive { background: rgba(220, 53, 69, 0.12); color: var(--color-danger); border-color: rgba(220, 53, 69, 0.26); }
+    .transport-btn.is-active { background: var(--color-primary); color: #fff; border-color: var(--color-primary); }
+    @media (max-width: 1023px) { .room { grid-template-columns: 1fr; } .chat-panel { width: 100%; height: auto; max-width: none; } }
+    @media (max-width: 639px) { .tiles { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body data-role="student" data-active="live">
+
+  <main class="container">
+    <!-- Header -->
+    <section class="pad-top-8 pad-x-6">
+      <div class="row wrap justify-between">
+        <div>
+          <h1 class="heading-lg">Live classroom</h1>
+          <div class="muted text-sm mt-2">Calculus I · Limits and Continuity · Room 4B</div>
+        </div>
+        <div class="row">
+          <span class="badge">Managed WebRTC (Daily primary)</span>
+          <span class="status-pill status-pill--danger">Live now</span>
+          <span class="muted text-xs">Session: 2:14:33 elapsed</span>
+        </div>
+      </div>
+
+      <!-- Room -->
+      <div class="room mt-5">
+        <div class="col" style="display: flex; flex-direction: column; gap: var(--space-4);">
+          <!-- Video tiles -->
+          <div class="tiles" role="region" aria-label="Participant video tiles">
+            <div class="tile active" data-participant="professor" tabindex="0" aria-label="Prof. Sedgewick (camera on)">
+              <span class="tile-avatar">Prof</span>
+              <span class="tile-topbar"><span class="dot" aria-hidden="true"></span></span>
+            </div>
+            <div class="tile" data-participant="samira" tabindex="0" aria-label="Samira (camera off, wave at 2:10)">
+              <span class="tile-avatar">SA</span>
+              <span class="tile-topbar"><span aria-hidden="true"></span></span>
+            </div>
+            <div class="tile" data-participant="roberto" tabindex="0" aria-label="Roberto (camera off)">
+              <span class="tile-avatar">RS</span>
+            </div>
+          </div>
+
+          <!-- Controls bar -->
+          <div class="transport-bar">
+            <span class="transport-btn is-active" role="button" id="btn-mute" aria-label="Mic: on"><span class="mic-icon"></span></span>
+            <span class="transport-btn" role="button" id="btn-camera" aria-label="Camera: on"><span class="camera-icon"></span></span>
+            <span class="transport-btn" role="button" id="btn-share" aria-label="Share screen"><span class="share-icon"></span></span>
+            <span class="transport-btn is-destructive" role="button" id="btn-record" aria-label="Record session"><span class="rec-icon"></span></span>
+            <button class="transport-btn" id="btn-fullscreen">Fullscreen</button>
+          </div>
+        </div>
+
+        <!-- Chat -->
+        <div class="chat-panel" style="height: 460px;">
+          <div class="chat-header">
+            <span>Live chat</span>
+            <span class="badge">Muted — everyone hears individually</span>
+          </div>
+          <div class="chat-messages">
+            <div class="chat-msg">
+              <div class="bubble"><span class="muted text-xs">Prof. Sedgewick</span><div class="mb-2">Welcome to the class — let's define a limit informally first.</div></div>
+            </div>
+            <div class="chat-msg chat-msg--out">
+              <div class="bubble">Samira: Can you repeat the ε formulation? I missed it.</div>
+            </div>
+            <div class="chat-msg">
+              <div class="bubble"><span class="muted text-xs">Roberto</span><div class="mb-2">Yes — and our notes on this topic are in the course materials.</div></div>
+            </div>
+            <div class="chat-msg">
+              <div class="bubble"><span class="muted text-xs">Prof. Sedgewick</span><div class="mb-2">Let me check — we discuss: ε-N definition exists? Yes → to screen-share? <span class="attachment">whiteboard_draft.pdf · uploaded</span></div></div>
+            </div>
+            <div class="chat-msg chat-msg--out">
+              <div class="bubble">Anonymous: “∀ ε ∃ δ” — got it. Thanks.</div>
+            </div>
+          </div>
+          <div class="chat-composer">
+            <input class="input" placeholder="Type a message…" aria-label="Chat message"/>
+            <button class="btn btn--primary btn--sm" id="chat-send">Send</button>
+          </div>
+        </div>
+
+        <!-- Whiteboard -->
+        <div class="whiteboard" style="height: 300px; margin-top: var(--space-4);" role="region" aria-label="Collaborative whiteboard (read-only in session)">
+          <div class="row wrap" style="gap: var(--space-2); margin-bottom: var(--space-2);">
+            <span class="chip chip--selected">Pencil</span>
+            <span class="chip chip--alternate">Eraser</span>
+            <span class="chip chip--alternate">Text</span>
+            <span class="chip chip--alternate">Undo</span>
+            <span class="chip chip--alternate">Clear board</span>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr; align-content: center; height: 100%; border: 1px dashed var(--color-border); border-radius: var(--radius-lg);">
+            <span class="muted text-xs" style="padding: var(--space-4);">Whiteboard — read-only, follows main speaker</span>
+          </div>
+        </div>
+
+        <!-- Attendance -->
+        <div class="attendance-list" aria-label="Attendance" style="margin-top: var(--space-4);">
+          <div class="row"><span class="row"><span class="avatar avatar--sm">Prof</span><span class="text-sm">Prof. Sedgewick</span></span><span class="attendance-status">In</span></div>
+          <div class="row"><span class="row"><span class="avatar avatar--sm">SA</span><span class="text-sm">Samira Patel</span></span><span class="attendance-status">In (2:10 ago)</span></div>
+          <div class="row"><span class="row"><span class="avatar avatar--sm">RS</span><span class="text-sm">Roberto Sura</span></span><span class="attendance-status">In (4:41 ago)</span></div>
+          <div class="row"><span class="row"><span class="avatar avatar--sm">AN</span><span class="text-sm">Anonymous contributor</span></span><span class="attendance-status">In (9 min ago)</span></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      const A = window.A;
+      // Inject icons into transport buttons + dot in tile-topbar
+      document.querySelectorAll(".transport-btn").forEach((btn) => {
+        const iconName = {
+          "btn-mute": btn.textContent === "Mute" ? "mic" : "camera",
+          "btn-camera": "camera",
+          "btn-share": "screenShare",
+          "btn-record": "warning",
+          "btn-fullscreen": "fullscreen"
+        }[btn.id] || "user";
+        btn.innerHTML = btn.textContent + '<span class="icon icon-sm" aria-hidden="true"></span>';
+        btn.querySelector(".icon").innerHTML = A.icons[iconName];
+      });
+      document.querySelector('.tile[data-participant="professor"] .tile-topbar').innerHTML = '<span style="color: #fff;"><svg class="icon icon-sm"><circle cx="12" cy="12" r="6" fill="currentColor"/></svg></span>';
+      document.querySelector('.tile[data-participant="samira"] .tile-topbar').innerHTML = "";
+
+      document.querySelectorAll("[data-participant]").forEach((t) => {
+        t.addEventListener("click", () => A.toast("Participant highlighted: " + t.dataset.participant, "info"));
+      });
+      const toastHandlers = ["btn-mute", "btn-camera", "btn-share", "btn-record", "btn-fullscreen", "chat-send"];
+      toastHandlers.forEach((id) => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener("click", () => A.toast(el.textContent + " — action recorded", "success"));
+      });
+    })();
+  </script>
+</body>
+</html>

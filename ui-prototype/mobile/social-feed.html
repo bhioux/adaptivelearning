@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="description" content="Mobile social feed — stacked cards with engagement metrics."/>
+  <title>Social Feed — Mobile</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"/>
+  <link rel="stylesheet" href="../design-tokens.css"/>
+  <link rel="stylesheet" href="../styles.css"/>
+  <link rel="stylesheet" href="styles.css"/>
+  <script src="../shell.js"></script>
+  <style>
+    .phone-body { padding: var(--space-4); }
+    .feed-m { display: grid; grid-template-columns: 1fr; gap: var(--space-3); }
+    .feed-card-m2 { border: 1px solid var(--color-border-subtle); border-radius: var(--radius-lg); background: var(--color-surface); overflow: hidden; box-shadow: var(--shadow-sm); cursor: pointer; }
+    .feed-card-m2 .thumb { aspect-ratio: 16/9; background: linear-gradient(135deg, var(--color-surface-3), var(--color-primary-light)); display: flex; align-items: flex-start; justify-content: flex-end; padding: var(--space-4); }
+    .feed-card-m2 .badge-source { font-size: var(--text-caption); font-weight: var(--weight-semibold); color: var(--color-text-dim); background: rgba(0,0,0,0.06); }
+    .feed-card-m2 .body { padding: var(--space-3) var(--space-3) var(--space-4); display: flex; flex-direction: column; gap: var(--space-2); }
+    .feed-card-m2 .body h4 { font-size: var(--text-heading-sm); margin: 0; }
+    .feed-card-m2 .body p { font-size: var(--text-body-sm); color: var(--color-text-muted); margin: 0; }
+    .feed-card-m2 .body .engage { font-size: var(--text-caption); color: var(--color-text-dim); }
+  </style>
+</head>
+<body>
+  <div class="phone-frame">
+    <div class="status-bar">10:35 AM</div>
+    <main class="phone-body">
+      <div class="app-nav">
+        <button class="back-btn" aria-label="Back"><span class="icon icon-sm"></span></button>
+        <span class="app-nav-title">Social feed</span>
+        <span class="app-nav-right"><span class="search"></span></span>
+      </div>
+
+      <div class="row wrap interest-chips-m">
+        <span class="chip chip--selected">All</span>
+        <span class="chip chip--alternate">Sports</span>
+        <span class="chip chip--alternate">Tech</span>
+        <span class="chip chip--alternate">Fashion</span>
+        <span class="chip chip--alternate">Culture</span>
+        <span class="chip chip--alternate">Science</span>
+      </div>
+
+      <div class="feed-m">
+        <a class="feed-card-m2" href="#">
+          <div class="thumb"><span class="badge-source">Tech</span></div>
+          <div class="body">
+            <h4>NVIDIA's Blackwell Push — is H100 dead yet?</h4>
+            <p>How a stealthy redesign reshaped the datacenter market — for learners who want the why behind the headlines.</p>
+            <div class="engage">2.4k views · 24 likes · 7 comments</div>
+          </div>
+        </a>
+        <a class="feed-card-m2" href="#">
+          <div class="thumb"><span class="badge-source">Sports</span></div>
+          <div class="body">
+            <h4>The Oberlin Winter Classic — a local story</h4>
+            <p>Heart-warming recap of the ice arena finals — community traditions and why local tournaments matter.</p>
+            <div class="engage">980 views · 3 comments</div>
+          </div>
+        </a>
+        <a class="feed-card-m2" href="#">
+          <div class="thumb"><span class="badge-source">Culture</span></div>
+          <div class="body">
+            <h4>Persistence Meets Patience — a note on creative craft</h4>
+            <p>A short reflection on what long-form study and slow creation have in common — with practical tips.</p>
+            <div class="engage">1.1k views · 41 likes · 12 comments</div>
+          </div>
+        </a>
+      </div>
+    </main>
+    <div class="home-indicator"></div>
+  </div>
+  <script>
+    (function () {
+      const A = window.A;
+      document.querySelectorAll(".back-btn .icon").forEach((s) => { s.innerHTML = A.icons.arrowLeft; });
+      document.querySelectorAll(".app-nav-right .search").forEach((s) => { s.innerHTML = A.icons.search; });
+    })();
+  </script>
+</body>
+</html>

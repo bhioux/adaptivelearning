@@ -1,0 +1,44 @@
+{
+  "name": "@al/backend",
+  "version": "0.1.0",
+  "private": true,
+  "type": "commonjs",
+  "scripts": {
+    "dev": "tsx src/main.ts",
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/main.js",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "generate": "prisma generate",
+    "db:push": "prisma db push --accept-data-loss",
+    "db:seed": "node prisma/seed.js",
+    "lint": "eslint \"src/**/*.ts\" \"tests/**/*.ts\" --max-warnings=0"
+  },
+  "dependencies": {
+    "@al/shared": "workspace:*",
+    "@opentelemetry/api": "^1.9.0",
+    "@opentelemetry/auto-instrumentations-node": "^0.46.1",
+    "@opentelemetry/exporter-trace-otlp-grpc": "^0.55.0",
+    "@opentelemetry/sdk-node": "^0.55.0",
+    "@prisma/client": "^5.22.0",
+    "@sentry/node": "^8.10.0",
+    "bcryptjs": "^3.0.3",
+    "bullmq": "^5.10.0",
+    "dotenv": "^16.4.5",
+    "express": "^4.20.0",
+    "jsonwebtoken": "^9.0.2",
+    "otplib": "^12.0.1",
+    "zod": "^3.23.8",
+    "pino": "^9.5.0",
+    "prisma": "^5.22.0"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^3.0.0",
+    "@types/express": "^4.17.21",
+    "@types/jsonwebtoken": "^9.0.7",
+    "@types/node": "^22.5.4",
+    "tsx": "^4.16.0",
+    "typescript": "^5.5.4",
+    "vitest": "^2.0.5"
+  }
+}

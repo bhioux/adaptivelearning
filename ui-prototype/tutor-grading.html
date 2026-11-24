@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="description" content="Tutor grading queue with rubric scores, audio feedback, and parent summaries."/>
+  <title>Tutor Grading — Adaptive Learning Platform</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"/>
+  <link rel="stylesheet" href="design-tokens.css"/>
+  <link rel="stylesheet" href="styles.css"/>
+  <script src="shell.js"></script>
+  <style>
+    .grading-table .mono { font-family: ui-monospace, "Cascadia Mono", "Segoe UI Mono", monospace; font-size: var(--text-body-xs); }
+    .rubric-score { display: flex; flex-direction: column; gap: var(--space-1); align-items: center; }
+    .rubric-score .score-num { font-size: var(--text-display-md); font-weight: var(--weight-bold); }
+    .detail-layout { display: grid; grid-template-columns: 360px minmax(0, 1fr); gap: var(--space-6); }
+    .teacher-feedback { margin-top: var(--space-5); border-top: 1px solid var(--color-border-subtle); padding-top: var(--space-5); }
+    @media (max-width: 1023px) { .detail-layout { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body data-role="tutor" data-active="grading">
+
+  <main class="container">
+    <!-- Header -->
+    <section class="pad-top-8 pad-x-6">
+      <div class="row wrap">
+        <h1 class="heading-lg">Grading queue</h1>
+        <span class="status-pill status-pill--success" id="queue-count">4 submissions ungraded</span>
+      </div>
+      <div class="muted text-sm mt-2">Class: Calculus I · Arms: Evenings (24 students) · Rubric feedback available after save</div>
+
+      <!-- Tabs -->
+      <div class="row wrap" style="margin-top: var(--space-5); gap: var(--space-3); border-bottom: 1px solid var(--color-border-subtle); padding-bottom: var(--space-2);">
+        <button class="btn btn--ghost" id="tab-queue" style="font-weight: var(--weight-semibold); border-bottom: 2px solid var(--color-primary); padding-bottom: var(--space-2);">Queue</button>
+        <button class="btn btn--ghost" id="tab-inprogress">In progress</button>
+        <button class="btn btn--ghost">Rubric</button>
+      </div>
+    </section>
+
+    <!-- Queue + detail -->
+    <section class="pad-top-8 pad-x-6">
+      <div class="detail-layout">
+        <!-- Queue list -->
+        <div class="card" style="padding: var(--space-3);">
+          <div class="table-wrap">
+            <table class="table grading-table" aria-label="Submissions queue">
+              <thead>
+                <tr>
+                  <th>Student</th><th>Lesson</th><th>Submitted</th><th>Files</th><th style="text-align: right;">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><div class="row"><span class="avatar avatar--sm">MC</span><span class="text-sm">Maya Chen</span></div></td>
+                  <td>L3.2 · Epsilon-Delta</td><td class="mono">Nov 19, 14:03</td>
+                  <td><a class="btn btn--ghost btn--sm" href="#" id="open-0">notes.pdf</a></td>
+                  <td style="text-align: right;"><span class="status-pill--neutral">Queued</span></td>
+                </tr>
+                <tr>
+                  <td><div class="row"><span class="avatar avatar--sm">RS</span><span class="text-sm">Roberto Sura</span></div></td>
+                  <td>L3.2 · Epsilon-Delta</td><td class="mono">Nov 19, 13:58</td>
+                  <td><a class="btn btn--ghost btn--sm" href="#" id="open-1">audio-demo.mp3</a></td>
+                  <td style="text-align: right;"><span class="status-pill--neutral">Queued</span></td>
+                </tr>
+                <tr>
+                  <td><div class="row"><span class="avatar avatar--sm">SP</span><span class="text-sm">Samira Patel</span></div></td>
+                  <td>L4.1 · Continuity</td><td class="mono">Nov 19, 13:51</td>
+                  <td><a class="btn btn--ghost btn--sm" href="#" id="open-2">screenshot.png</a></td>
+                  <td style="text-align: right;"><span class="status-pill--neutral">In progress</span></td>
+                </tr>
+                <tr>
+                  <td><div class="row"><span class="avatar avatar--sm">AL</span><span class="text-sm">Ada Lovelace</span></div></td>
+                  <td>L2.1 · Definition of Limit</td><td class="mono">Nov 18, 17:44</td>
+                  <td><a class="btn btn--ghost btn--sm" href="#" id="open-3">essay.docx</a></td>
+                  <td style="text-align: right;"><span class="status-pill--success">Returned</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="row wrap mt-3" style="justify-content: flex-end;">
+            <button class="btn btn--ghost btn--sm" id="filter-status">Queued · 3 · In progress · 1</button>
+          </div>
+        </div>
+
+        <!-- Detail panel -->
+        <div class="card" style="padding: var(--space-6);">
+          <div class="row wrap justify-between">
+            <h2 class="heading-md">Grading: Maya Chen · L3.2 Epsilon-Delta</h2>
+            <span class="status-pill status-pill--neutral">Submitted 14:03 · Due Nov 20</span>
+          </div>
+
+          <!-- Audio player for submissions -->
+          <div class="row wrap mt-3" style="gap: var(--space-3);">
+            <span class="badge">Audio feedback demo</span>
+            <span class="badge" style="color: var(--color-text-dim);">2:14 min</span>
+          </div>
+          <div class="controls-bar mt-3">
+            <span class="transport-btn is-primary" role="button" id="audio-play" aria-label="Play feedback audio">
+              <span class="icon"><span class="muted"></span></span>
+            </span>
+            <span class="muted text-xs">1:02 / 2:14</span>
+            <span class="spacer"></span>
+            <span class="volume-slider" aria-label="Volume"><span class="icon muted"></span><input type="range" min="0" max="10" value="7" aria-label="Volume level"/></span>
+          </div>
+
+          <!-- Rubric scores -->
+          <h3 class="heading-sm mt-6">Rubric scores</h3>
+          <div class="rubric-scores">
+            <div class="rubric-score">
+              <span class="field-label">Clarity</span>
+              <span class="score-num">7</span>
+              <input class="input" style="max-width: 90px;" value="7" aria-label="Clarity score" type="range" min="0" max="10"/>
+            </div>
+            <div class="rubric-score">
+              <span class="field-label">Accuracy</span>
+              <span class="score-num">8</span>
+              <input class="input" style="max-width: 90px;" value="8" aria-label="Accuracy score" type="range" min="0" max="10"/>
+            </div>
+            <div class="rubric-score">
+              <span class="field-label">Reasoning</span>
+              <span class="score-num">6</span>
+              <input class="input" style="max-width: 90px;" value="6" aria-label="Reasoning score" type="range" min="0" max="10"/>
+            </div>
+            <div class="rubric-score">
+              <span class="field-label">Presentation</span>
+              <span class="score-num">9</span>
+              <input class="input" style="max-width: 90px;" value="9" aria-label="Presentation score" type="range" min="0" max="10"/>
+            </div>
+          </div>
+
+          <!-- Written feedback -->
+          <div class="form-field mt-5">
+            <span class="field-label">Written feedback</span>
+            <textarea class="textarea" rows="5" placeholder="Great work — your epsilon/delta formulation is precise. For a Challenge: try a formal-proof check..." aria-label="Written feedback"></textarea>
+          </div>
+
+          <!-- Adaptive recommendation -->
+          <div class="row wrap mt-4" style="gap: var(--space-3);">
+            <span class="status-pill status-pill--warning">Recommended: next lesson ×1.5 duration</span>
+            <span class="badge">Difficulty — Hard</span>
+          </div>
+
+          <!-- Actions -->
+          <div class="row wrap mt-6" style="gap: var(--space-3);">
+            <button class="btn btn--primary" id="save-feedback">Save feedback &amp; mark done</button>
+            <button class="btn btn--ghost">Save draft</button>
+            <button class="btn btn--ghost" style="color: var(--color-danger);">Archive</button>
+          </div>
+
+          <!-- Feedback summary sent to parent -->
+          <div class="teacher-feedback">
+            <h4 class="heading-sm">Guardrailed parent summary</h4>
+            <p class="muted text-sm">"Samira is developing strong analytical skills on formal proofs, and we recommend continuing to practice limit arguments with increased complexity."</p>
+            <div class="row wrap mt-2"><button class="btn btn--ghost">Review summary</button><button class="btn btn--ghost">Edit summary</button></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      // Queue rows: show the first submission as "in progress"
+      document.querySelectorAll("#open-0,#open-1,#open-2,#open-3,#audio-play,#save-feedback").forEach((el) => {
+        el.addEventListener("click", () => window.A.toast("Submission opened for grading", "info"));
+      });
+      const audioPlay = document.getElementById("audio-play");
+      audioPlay.addEventListener("click", () => {
+        window.A.toast("Playing audio feedback: Maya Chen (2:14 min)", "info");
+        audioPlay.querySelector("span.muted").innerHTML = window.A.icons.playCircle;
+      });
+      document.getElementById("save-feedback").addEventListener("click", () => {
+        window.A.toast("Feedback saved. Adaptive engine: recommending heavier practice on formal limits.", "success");
+      });
+    })();
+  </script>
+</body>
+</html>

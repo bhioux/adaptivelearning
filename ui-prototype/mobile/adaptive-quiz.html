@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="description" content="Adaptive quiz on mobile — options, hints, and explanations."/>
+  <title>Adaptive Quiz — Mobile</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"/>
+  <link rel="stylesheet" href="../design-tokens.css"/>
+  <link rel="stylesheet" href="../styles.css"/>
+  <link rel="stylesheet" href="styles.css"/>
+  <script src="../shell.js"></script>
+  <style>
+    .phone-body { padding: var(--space-5) var(--space-4); }
+    .progress-dot { width: 11px; height: 11px; border-radius: 50%; border: 2px solid var(--color-border-strong); display: inline-block; margin-right: 6px; background: transparent; }
+    .progress-dot.is-done { background: var(--color-success); border-color: var(--color-success); }
+    .progress-dot.is-active { border-color: var(--color-primary); box-shadow: 0 0 0 3px var(--color-primary-bg); }
+    .question { max-width: none; padding: var(--space-4); margin-top: var(--space-4); }
+    .question h2 { font-size: var(--text-heading-lg); }
+    .option-m { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3); border: 2px solid var(--color-border); border-radius: var(--radius-md); cursor: pointer; }
+    .option-m .radio { width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--color-border-strong); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .option-m.is-correct { border-color: var(--color-success); background: rgba(40, 167, 69, 0.06); }
+    .explanation-m { margin-top: var(space-5); padding: var(--space-3); border-left: 4px solid var(--color-success); background: rgba(40, 167, 69, 0.06); border-radius: 0 var(--radius-md) var(--radius-md) 0; font-size: var(--text-body-sm); color: var(--color-text-muted); }
+    .hint-m { margin-top: var(--space-3); padding: var(--space-3); border: 1px dashed var(--color-border-strong); border-radius: var(--radius-lg); background: var(--color-surface-2); }
+  </style>
+</head>
+<body>
+  <div class="phone-frame">
+    <div class="status-bar">10:31 AM</div>
+    <main class="phone-body">
+      <div class="app-nav">
+        <button class="back-btn" aria-label="Back"><span class="icon icon-sm"></span></button>
+        <span class="app-nav-title">Adaptive quiz</span>
+        <span class="app-nav-right"></span>
+      </div>
+      <div class="row wrap justify-between mt-2">
+        <span class="badge">Question 2 of 5</span>
+        <span class="badge">Difficulty: Hard</span>
+      </div>
+      <div class="row mt-2">
+        <div class="progress-ring" style="--progress-deg: 40deg; --ring-size: 40px;"><span class="ring-label">2/5</span></div>
+      </div>
+      <div class="row wrap mt-2" role="list">
+        <span class="progress-dot is-done" role="listitem" aria-label="Q1 answered"></span>
+        <span class="progress-dot is-active" role="listitem" aria-label="Q2 current"></span>
+        <span class="progress-dot" role="listitem" aria-label="Q3 pending"></span>
+        <span class="progress-dot" role="listitem" aria-label="Q4 pending"></span>
+        <span class="progress-dot" role="listitem" aria-label="Q5 pending"></span>
+      </div>
+
+      <div class="question">
+        <h2>Which sequence theorem applies when terms are squeezed between two null sequences?</h2>
+        <div class="options">
+          <div class="option-m"><span class="radio"></span><span>Weierstrass Extreme Value Theorem</span></div>
+          <div class="option-m"><span class="radio"></span><span>Cauchy Convergence Criterion</span></div>
+          <div class="option-m is-correct"><span class="radio"></span><span>Squeeze Theorem</span></div>
+          <div class="option-m"><span class="radio"></span><span>Intermediate Value Theorem</span></div>
+        </div>
+        <div class="hint-m" role="status">
+          <span class="badge">Hint — uses 1 energy point</span>
+          <p class="muted text-sm mt-2">Recall that the squeeze theorem applies when two outer sequences converge to the same limit L and a third sequence lies between them near that point.</p>
+        </div>
+        <div class="explanation-m" role="status">Correct: the Squeeze Theorem — if aₙ ≤ bₙ ≤ cₙ for large n and lim aₙ = lim cₙ = L, then lim bₙ = L.</div>
+      </div>
+
+      <div class="m-sticky-bar">
+        <button class="btn btn--ghost btn--sm" id="m-prev" disabled>Previous</button>
+        <button class="btn btn--primary btn--sm" id="m-next">Next</button>
+        <button class="btn btn--ghost btn--sm" id="m-hint">Hint</button>
+      </div>
+    </main>
+    <div class="home-indicator"></div>
+  </div>
+  <script>
+    (function () {
+      const A = window.A;
+      document.querySelectorAll(".back-btn .icon").forEach((s) => { s.innerHTML = A.icons.arrowLeft; });
+      ["m-prev", "m-next", "m-hint"].forEach((id) => {
+        document.getElementById(id).addEventListener("click", () => A.toast(id.replace("m-", "") + " — moving forward", "info"));
+      });
+    })();
+  </script>
+</body>
+</html>
